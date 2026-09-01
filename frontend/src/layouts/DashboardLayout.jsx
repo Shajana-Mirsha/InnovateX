@@ -8,7 +8,7 @@ const DashboardLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-slate-950 text-slate-100">
       {/* Desktop Sidebar */}
       <Sidebar />
 
@@ -19,13 +19,13 @@ const DashboardLayout = () => {
       />
 
       {/* Main content body wrapper */}
-      <div className="flex flex-col flex-grow overflow-hidden">
+      <div className="flex flex-col flex-grow overflow-hidden min-w-0">
         {/* Top Navbar */}
         <Navbar onMenuClick={() => setMobileMenuOpen(true)} />
 
         {/* Scrollable sub-views container */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 bg-slate-950">
+          <div className="max-w-7xl mx-auto w-full">
             <Outlet />
           </div>
         </main>

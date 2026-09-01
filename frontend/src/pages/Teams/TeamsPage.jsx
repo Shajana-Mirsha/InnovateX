@@ -10,21 +10,19 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import Button from "../../components/common/Button";
+import { CardSkeleton } from "../../components/common/Skeleton";
 import { Users, Calendar, User, ArrowRight, UserPlus } from "lucide-react";
+import { toast } from "sonner";
 
 const TeamsPage = () => {
   const { user } = useAuth();
-  
   const [teams, setTeams] = useState([]);
   const [hackathons, setHackathons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [hackathonFilter, setHackathonFilter] = useState("all");
-
-  // Joining state
   const [joiningTeamId, setJoiningTeamId] = useState(null);
 
   const fetchData = async () => {
@@ -36,14 +34,9 @@ const TeamsPage = () => {
         getAllHackathons(),
       ]);
 
-      if (teamsRes.success) {
-        setTeams(teamsRes.teams || []);
-      }
-      if (hackRes.success) {
-        setHackathons(hackRes.hackathons || []);
-      }
+      if (teamsRes.success) setTeams(teamsRes.teams || []);
+      if (hackRes.success) setHackathons(hackRes.hackathons || []);
     } catch (err) {
-      console.error(err);
       setError("Failed to fetch teams information.");
     } finally {
       setLoading(false);
@@ -56,7 +49,7 @@ const TeamsPage = () => {
 
   const handleJoinTeam = async (teamId) => {
     if (!user) {
-      alert("Please login first.");
+      toast.error("Please login first.");
       return;
     }
 
@@ -64,7 +57,6 @@ const TeamsPage = () => {
     try {
       const res = await joinTeam(teamId);
       if (res.success) {
-        // Update local state to reflect membership
         setTeams((prevTeams) =>
           prevTeams.map((t) => {
             if (t._id === teamId) {
@@ -79,47 +71,54 @@ const TeamsPage = () => {
             return t;
           })
         );
-        alert("Successfully joined the team!");
+        toast.success("Successfully joined the team!");
       }
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to join team.");
+      toast.error(err.response?.data?.message || "Failed to join team.");
     } finally {
       setJoiningTeamId(null);
     }
   };
 
-  // Client-side filtering
   const filteredTeams = teams.filter((t) => {
     const matchesSearch =
       t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      t.leader?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (t.leader?.name && t.leader.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (t.description && t.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesHackathon =
-      hackathonFilter === "all" || t.hackathon?._id === hackathonFilter;
+      hackathonFilter === "all" || (t.hackathon?._id || t.hackathon) === hackathonFilter;
 
     return matchesSearch && matchesHackathon;
   });
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
-      <PageHeader
-        title="All Teams"
-        description="Browse collaborative groups or find an open team to join."
-        action={
-          user && user.role === "participant" ? (
-            <Link to="/teams/create">
-              <Button variant="primary" icon={UserPlus}>
-                Create Team
-              </Button>
-            </Link>
-          ) : null
-        }
-      />
+    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+            <Users className="w-3.5 h-3.5" />
+            <span>Collaboration & Rosters</span>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            Challenge Teams
+          </h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Browse collaborative builder teams or find an open group to join.
+          </p>
+        </div>
+
+        {user && user.role === "participant" && (
+          <Link to="/teams/create">
+            <Button variant="primary" size="md" icon={UserPlus}>
+              Create New Team
+            </Button>
+          </Link>
+        )}
+      </div>
 
       {/* FILTER BAR */}
-      <div className="bg-white border border-slate-100 p-4 rounded-xl shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row gap-4 items-center justify-between">
         <SearchBar
           value={searchTerm}
           onChange={setSearchTerm}
@@ -127,7 +126,7 @@ const TeamsPage = () => {
         />
         <div className="w-full md:w-64 shrink-0">
           <select
-            className="w-full text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 focus:border-brand-500 focus:outline-none"
             value={hackathonFilter}
             onChange={(e) => setHackathonFilter(e.target.value)}
           >
@@ -143,21 +142,20 @@ const TeamsPage = () => {
 
       {/* TEAMS GRID */}
       {loading ? (
-        <div className="flex justify-center py-20">
-          <LoadingSpinner size="lg" />
-        </div>
+        <CardSkeleton count={6} />
       ) : error ? (
         <ErrorMessage message={error} retryAction={fetchData} />
       ) : filteredTeams.length === 0 ? (
         <EmptyState
+          icon={Users}
           title="No Teams Found"
-          message="Adjust search query or filter settings and try again."
+          message="No teams match your search or filter settings."
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTeams.map((team) => {
-            const isMember = team.members?.some((m) => m._id === user?.id);
-            const isLeader = team.leader?._id === user?.id;
+            const isMember = team.members?.some((m) => (m._id || m) === user?.id);
+            const isLeader = (team.leader?._id || team.leader) === user?.id;
             const isFull = team.status === "full";
             const isClosed = team.status === "closed";
             const maxCapacity = team.hackathon?.maxTeamSize || 4;
@@ -165,65 +163,60 @@ const TeamsPage = () => {
             return (
               <div
                 key={team._id}
-                className="bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md hover:border-slate-250 transition duration-200 flex flex-col h-full overflow-hidden"
+                className="glass-panel rounded-3xl border border-slate-800/80 hover:border-slate-700 transition flex flex-col h-full overflow-hidden justify-between shadow-lg"
               >
-                <div className="p-6 flex-grow flex flex-col">
-                  {/* Status and capacity badge */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-3xs font-semibold text-slate-400">
-                      Capacity: {team.members?.length} / {maxCapacity}
+                <div className="p-6 flex-grow flex flex-col space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-3xs font-mono font-bold text-slate-400">
+                      Roster: {team.members?.length || 1} / {maxCapacity}
                     </span>
                     <StatusBadge status={team.status} />
                   </div>
 
-                  <h3 className="text-base font-bold text-slate-800 mb-2 truncate">
-                    {team.name}
-                  </h3>
-                  <p className="text-xs text-slate-500 line-clamp-3 mb-4 leading-relaxed flex-grow">
-                    {team.description || "No description provided."}
-                  </p>
+                  <div>
+                    <h3 className="text-base font-bold text-white tracking-tight truncate">
+                      {team.name}
+                    </h3>
+                    <p className="text-xs text-slate-400 line-clamp-3 mt-1.5 leading-relaxed">
+                      {team.description || "No description provided."}
+                    </p>
+                  </div>
 
-                  {/* Metadata */}
-                  <div className="space-y-2 border-t border-slate-50 pt-4 mt-auto">
-                    <div className="flex items-center gap-2 text-3xs text-slate-500 font-semibold">
-                      <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">Hackathon: {team.hackathon?.title}</span>
+                  <div className="space-y-2 border-t border-slate-800/60 pt-4 mt-auto text-3xs text-slate-400 font-mono">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                      <span className="truncate">Challenge: <strong className="text-slate-300 font-sans">{team.hackathon?.title || "N/A"}</strong></span>
                     </div>
-                    <div className="flex items-center gap-2 text-3xs text-slate-500 font-semibold">
-                      <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span>Leader: {team.leader?.name}</span>
+                    <div className="flex items-center gap-2">
+                      <User className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                      <span>Leader: <strong className="text-slate-300 font-sans">{team.leader?.name || "Member"}</strong></span>
                     </div>
                   </div>
                 </div>
 
-                <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between gap-4">
-                  <Link to={`/teams/${team._id}`} className="text-xs font-bold text-slate-600 hover:text-slate-800 inline-flex items-center gap-1">
-                    Details
-                    <ArrowRight className="w-3.5 h-3.5" />
+                <div className="px-6 py-4 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between gap-4">
+                  <Link to={`/teams/${team._id}`} className="text-xs font-bold text-slate-300 hover:text-white inline-flex items-center gap-1">
+                    Details <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
 
                   {user && user.role === "participant" && (
                     <div>
                       {isLeader ? (
-                        <span className="text-3xs font-bold bg-amber-50 text-amber-700 px-2 py-1 rounded">
-                          You Lead
+                        <span className="text-3xs font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                          Leader
                         </span>
                       ) : isMember ? (
-                        <span className="text-3xs font-bold bg-emerald-50 text-emerald-700 px-2 py-1 rounded">
-                          Member
+                        <span className="text-3xs font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                          Joined
                         </span>
                       ) : isFull || isClosed ? (
-                        <button
-                          disabled
-                          className="px-3.5 py-1.5 bg-slate-200 text-slate-400 font-bold text-3xs rounded-lg cursor-not-allowed"
-                        >
+                        <span className="text-3xs font-mono text-slate-500">
                           Closed
-                        </button>
+                        </span>
                       ) : (
                         <Button
                           size="sm"
                           variant="outline"
-                          className="bg-white text-sky-600 border-sky-200 hover:bg-sky-50"
                           loading={joiningTeamId === team._id}
                           onClick={() => handleJoinTeam(team._id)}
                         >

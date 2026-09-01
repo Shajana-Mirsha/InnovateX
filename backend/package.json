@@ -5,20 +5,37 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "test:ai": "node src/scripts/testAiEvaluation.js",
+    "test:m1": "node src/scripts/testModule1Criteria.js",
+    "test:m2": "node src/scripts/testModule2ScoreModel.js",
+    "test:m3": "node src/scripts/testModule3Assessment.js",
+    "test:m4": "node src/scripts/testModule4Similarity.js",
+    "test:m5": "node src/scripts/testModule5ValidationLog.js",
+    "test:m6": "node src/scripts/testModule6WeightedRanking.js",
+    "test:m7": "node src/scripts/testModule7ParticipantFeedback.js",
+    "test:m8": "node src/scripts/testModule8Calibration.js",
+    "test:m9": "node src/scripts/testModule9Metrics.js",
+    "test:judge": "node src/scripts/testJudgeEvaluationModule.js",
+    "test:pipeline": "node src/scripts/testPipelineIntelligence.js",
+    "test:participant": "node src/scripts/testParticipantJourney.js",
+    "test:admin": "node src/scripts/testAdminGovernance.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.9.4",
-    "pg": "^8.23.0"
+    "openai": "^4.86.1",
+    "pg": "^8.23.0",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

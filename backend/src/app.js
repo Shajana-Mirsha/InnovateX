@@ -10,6 +10,9 @@ const scoreRoutes = require("./routes/scoreRoutes");
 const leaderboardRoutes = require("./routes/leaderboardRoutes");
 const resultRoutes = require("./routes/resultRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const similarityRoutes = require("./routes/similarityRoutes");
+const calibrationRoutes = require("./routes/calibrationRoutes");
+const metricsRoutes = require("./routes/metricsRoutes");
 
 const app = express();
 
@@ -35,5 +38,8 @@ app.use("/api/scores", scoreRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/results", resultRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/similarity-labels", similarityRoutes);
+app.use("/api/calibration", calibrationRoutes);
+app.use("/api/metrics", metricsRoutes);
 
 module.exports = app;

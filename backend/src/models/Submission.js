@@ -1,5 +1,29 @@
 const mongoose = require("mongoose");
 
+const similarityFlagSchema = new mongoose.Schema(
+  {
+    submission: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Submission",
+      required: true
+    },
+    score: {
+      type: Number,
+      required: true
+    },
+    model: {
+      type: String,
+      required: true,
+      default: "voyage-3"
+    },
+    computedAt: {
+      type: Date,
+      default: Date.now
+    }
+  },
+  { _id: false }
+);
+
 const submissionSchema = new mongoose.Schema(
   {
     hackathon: {
@@ -53,7 +77,9 @@ const submissionSchema = new mongoose.Schema(
       type: String,
       enum: ["draft", "submitted"],
       default: "submitted"
-    }
+    },
+
+    similarityFlags: [similarityFlagSchema]
   },
   {
     timestamps: true

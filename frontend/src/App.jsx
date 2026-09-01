@@ -1,6 +1,8 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Outlet, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Outlet, Link, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { SocketProvider } from "./context/SocketContext";
+import { Toaster } from "sonner";
 
 // Route Guards
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -17,6 +19,12 @@ import NotFoundPage from "./pages/NotFoundPage";
 
 // Dashboard Pages
 import Dashboard from "./pages/Dashboard/Dashboard";
+
+// Admin Pages
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import UserManagementPage from "./pages/Admin/UserManagementPage";
+import SystemActivityPage from "./pages/Admin/SystemActivityPage";
+import PlatformSettingsPage from "./pages/Admin/PlatformSettingsPage";
 
 // Hackathon Pages
 import HackathonListPage from "./pages/Hackathons/HackathonListPage";
@@ -45,6 +53,12 @@ import MyScoresPage from "./pages/Judge/MyScoresPage";
 // Leaderboard Pages
 import LeaderboardPage from "./pages/Leaderboard/LeaderboardPage";
 
+// IEEE Research Pages
+import EvaluationIntelligencePage from "./pages/Evaluation/EvaluationIntelligencePage";
+import AiEvaluationRunPage from "./pages/Evaluation/AiEvaluationRunPage";
+import SimilarityReviewPage from "./pages/Similarity/SimilarityReviewPage";
+import ResearchMetricsPage from "./pages/Research/ResearchMetricsPage";
+
 // Results/Winners Pages
 import ResultsPage from "./pages/Results/ResultsPage";
 import ManageResultsPage from "./pages/Results/ManageResultsPage";
@@ -56,35 +70,35 @@ import NotificationsPage from "./pages/Notifications/NotificationsPage";
 // Adaptive Layout for Hackathons (shows Sidebar if logged in, public header if not)
 const AdaptiveHackathonLayout = () => {
   const { isAuthenticated } = useAuth();
-  
+
   if (isAuthenticated) {
     return <DashboardLayout />;
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50">
+    <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100">
       {/* Public Navigation */}
-      <nav className="fixed w-full bg-white/80 backdrop-blur-md z-40 border-b border-slate-105 py-4 px-6 md:px-12 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-655 text-white font-extrabold text-lg">
+      <nav className="fixed w-full bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-800 py-4 px-6 md:px-12 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2.5">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-600 text-white font-extrabold text-lg shadow-md shadow-brand-600/30">
             IX
           </div>
-          <span className="font-bold text-slate-800 text-lg tracking-wide">InnovateX</span>
+          <span className="font-bold text-white text-lg tracking-tight font-display">InnovateX</span>
         </Link>
-        <div className="flex items-center gap-6 text-sm font-semibold text-slate-600">
-          <Link to="/" className="hover:text-sky-600 transition">Home</Link>
-          <Link to="/hackathons" className="hover:text-sky-600 transition">Hackathons</Link>
-          <Link to="/login" className="hover:text-sky-600 transition">Login</Link>
+        <div className="flex items-center gap-6 text-xs font-semibold text-slate-300">
+          <Link to="/" className="hover:text-brand-400 transition">Home</Link>
+          <Link to="/hackathons" className="hover:text-brand-400 transition">Hackathons</Link>
+          <Link to="/login" className="hover:text-brand-400 transition">Login</Link>
         </div>
       </nav>
-      
+
       <main className="flex-grow pt-24 pb-12 px-6 max-w-7xl mx-auto w-full">
         <Outlet />
       </main>
-      
+
       {/* Public Footer */}
       <footer className="bg-slate-900 text-slate-400 py-8 px-6 text-center border-t border-slate-800 text-xs">
-        <p>&copy; 2026 InnovateX Hackathon Management. All rights reserved.</p>
+        <p>&copy; 2026 InnovateX Automated Evaluation Platform. IEEE Research Implementation.</p>
       </footer>
     </div>
   );
@@ -93,75 +107,103 @@ const AdaptiveHackathonLayout = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Public Pages */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+      <SocketProvider>
+        <Router>
+          <Toaster richColors position="top-right" theme="dark" />
+          <Routes>
+            {/* Public Pages */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-          {/* Adaptive Hackathon Routes (Public but styled differently if authenticated) */}
-          <Route element={<AdaptiveHackathonLayout />}>
-            <Route path="/hackathons" element={<HackathonListPage />} />
-            <Route path="/hackathons/:id" element={<HackathonDetailsPage />} />
-          </Route>
-
-          {/* Protected Dashboard/App Routes */}
-          <Route
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/teams" element={<TeamsPage />} />
-            <Route path="/teams/create" element={<CreateTeamPage />} />
-            <Route path="/teams/:id" element={<TeamDetailsPage />} />
-            <Route path="/my-teams" element={<MyTeamsPage />} />
-            <Route path="/registrations" element={<MyRegistrationsPage />} />
-            <Route path="/submissions" element={<SubmissionsPage />} />
-            <Route path="/submissions/create" element={<CreateSubmissionPage />} />
-            <Route path="/submissions/:id" element={<SubmissionDetailsPage />} />
-            <Route path="/results" element={<ResultsPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
-            <Route path="/profile" element={<ProfilePage />} />
-
-            {/* Organizer & Admin Role-Protected Routes */}
-            <Route
-              element={
-                <RoleProtectedRoute
-                  allowedRoles={["organizer", "admin"]}
-                />
-              }
-            >
-              <Route path="/manage/hackathons" element={<ManageHackathonsPage />} />
-              <Route path="/manage/registrations" element={<ManageRegistrationsPage />} />
-              <Route path="/manage/results" element={<ManageResultsPage />} />
+            {/* Adaptive Hackathon Routes */}
+            <Route element={<AdaptiveHackathonLayout />}>
+              <Route path="/hackathons" element={<HackathonListPage />} />
+              <Route path="/hackathons/:id" element={<HackathonDetailsPage />} />
             </Route>
 
-            {/* Judge Role-Protected Routes */}
+            {/* Protected Dashboard/App Routes */}
             <Route
               element={
-                <RoleProtectedRoute allowedRoles={["judge", "organizer", "admin"]} />
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
               }
             >
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/teams" element={<TeamsPage />} />
+              <Route path="/teams/create" element={<CreateTeamPage />} />
+              <Route path="/teams/:id" element={<TeamDetailsPage />} />
+              <Route path="/my-teams" element={<MyTeamsPage />} />
+              <Route path="/registrations" element={<MyRegistrationsPage />} />
+              <Route path="/submissions" element={<SubmissionsPage />} />
+              <Route path="/submissions/create" element={<CreateSubmissionPage />} />
+              <Route path="/submissions/:id" element={<SubmissionDetailsPage />} />
               <Route path="/leaderboard" element={<LeaderboardPage />} />
-            </Route>
-            <Route
-              element={
-                <RoleProtectedRoute allowedRoles={["judge"]} />
-              }
-            >
-              <Route path="/judge/submissions" element={<JudgeSubmissionsPage />} />
-              <Route path="/judge/scores" element={<MyScoresPage />} />
-            </Route>
-          </Route>
+              <Route path="/results" element={<ResultsPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
 
-          {/* 404 Route */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Router>
+              {/* Dedicated Admin-Only Management Routes */}
+              <Route
+                element={
+                  <RoleProtectedRoute allowedRoles={["admin"]} />
+                }
+              >
+                <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/users" element={<UserManagementPage />} />
+                <Route path="/admin/activity" element={<SystemActivityPage />} />
+                <Route path="/admin/settings" element={<PlatformSettingsPage />} />
+              </Route>
+
+              {/* Organizer & Admin Management Routes */}
+              <Route
+                element={
+                  <RoleProtectedRoute
+                    allowedRoles={["organizer", "admin"]}
+                  />
+                }
+              >
+                <Route path="/manage/hackathons" element={<ManageHackathonsPage />} />
+                <Route path="/manage/ai-evaluation" element={<AiEvaluationRunPage />} />
+                <Route path="/manage/ai-evaluation/:hackathonId" element={<AiEvaluationRunPage />} />
+                <Route path="/manage/registrations" element={<ManageRegistrationsPage />} />
+                <Route path="/manage/results" element={<ManageResultsPage />} />
+              </Route>
+
+              {/* Research, Similarity, & Evaluation Intelligence Shared Routes */}
+              <Route
+                element={
+                  <RoleProtectedRoute
+                    allowedRoles={["organizer", "admin", "judge"]}
+                  />
+                }
+              >
+                <Route path="/manage/evaluation-intelligence" element={<EvaluationIntelligencePage />} />
+                <Route path="/manage/evaluation-intelligence/:hackathonId" element={<EvaluationIntelligencePage />} />
+                <Route path="/manage/similarity" element={<SimilarityReviewPage />} />
+                <Route path="/manage/similarity/:hackathonId" element={<SimilarityReviewPage />} />
+                <Route path="/manage/research-metrics" element={<ResearchMetricsPage />} />
+                <Route path="/manage/research-metrics/:hackathonId" element={<ResearchMetricsPage />} />
+              </Route>
+
+              {/* Judge Role-Protected Routes */}
+              <Route
+                element={
+                  <RoleProtectedRoute allowedRoles={["judge", "admin"]} />
+                }
+              >
+                <Route path="/judge/submissions" element={<JudgeSubmissionsPage />} />
+                <Route path="/judge/scores" element={<MyScoresPage />} />
+              </Route>
+            </Route>
+
+            {/* 404 Route */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Router>
+      </SocketProvider>
     </AuthProvider>
   );
 };

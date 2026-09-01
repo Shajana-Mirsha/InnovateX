@@ -5,8 +5,9 @@ import {
   createHackathon,
   updateHackathon,
   deleteHackathon,
-  getAllHackathons,
+  getHackathons
 } from "../../api/hackathonApi";
+import HackathonCriteriaModal from "./HackathonCriteriaModal";
 import PageHeader from "../../components/common/PageHeader";
 import Button from "../../components/common/Button";
 import StatusBadge from "../../components/common/StatusBadge";
@@ -14,24 +15,41 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
+import { TableSkeleton } from "../../components/common/Skeleton";
 import { formatDate } from "../../utils/helpers";
-import { Plus, Edit2, Trash2, Calendar, MapPin, Globe } from "lucide-react";
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Calendar,
+  MapPin,
+  Globe,
+  Sliders,
+  Sparkles,
+  ShieldAlert,
+  BarChart3,
+  Brain,
+  ExternalLink
+} from "lucide-react";
+import { toast } from "sonner";
 
 const ManageHackathonsPage = () => {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  // URL Query triggers
   const queryParams = new URLSearchParams(location.search);
   const showCreateForm = queryParams.get("create") === "true";
   const editId = queryParams.get("edit");
 
-  // State
   const [myHackathons, setMyHackathons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
+
+  // Criteria Modal State
+  const [criteriaHackathon, setCriteriaHackathon] = useState(null);
+  const [criteriaModalOpen, setCriteriaModalOpen] = useState(false);
+
   // Form states
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -49,7 +67,7 @@ const ManageHackathonsPage = () => {
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
 
-  // Deletion modals state
+  // Deletion state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [targetHackathon, setTargetHackathon] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -58,11 +76,10 @@ const ManageHackathonsPage = () => {
     setLoading(true);
     setError("");
     try {
-      const data = await getAllHackathons();
+      const data = await getHackathons();
       if (data.success) {
-        // Organizer sees only their events. Admin sees all events.
         const events = (data.hackathons || []).filter(
-          (h) => user.role === "admin" || h.createdBy?._id === user.id
+          (h) => user.role === "admin" || (h.createdBy?._id || h.createdBy) === user.id
         );
         setMyHackathons(events);
       }
@@ -78,7 +95,6 @@ const ManageHackathonsPage = () => {
     fetchMyEvents();
   }, [user]);
 
-  // If in edit mode, load hackathon details into form
   useEffect(() => {
     if (editId && myHackathons.length > 0) {
       const target = myHackathons.find((h) => h._id === editId);
@@ -87,8 +103,7 @@ const ManageHackathonsPage = () => {
         setDescription(target.description || "");
         setDomain(target.domain || "");
         setMode(target.mode || "online");
-        
-        // Format ISO date strings for input fields (YYYY-MM-DD)
+
         const formatInputDate = (dString) => {
           if (!dString) return "";
           return dString.substring(0, 10);
@@ -103,7 +118,6 @@ const ManageHackathonsPage = () => {
         setStatus(target.status || "upcoming");
       }
     } else {
-      // Clear forms for create mode
       setTitle("");
       setDescription("");
       setDomain("");
@@ -171,22 +185,19 @@ const ManageHackathonsPage = () => {
       }
 
       if (response.success) {
-        setFormSuccess(
+        toast.success(
           editId
             ? "Hackathon updated successfully!"
             : "Hackathon hosted successfully!"
         );
-        // Refresh
         await fetchMyEvents();
-        // Redirect after short timeout
         setTimeout(() => {
           navigate("/manage/hackathons");
-        }, 1500);
+        }, 1200);
       } else {
         setFormError(response.message || "Failed to submit event details");
       }
     } catch (err) {
-      console.error(err);
       setFormError(err.response?.data?.message || "Operation failed.");
     } finally {
       setFormSubmitLoading(false);
@@ -204,11 +215,11 @@ const ManageHackathonsPage = () => {
     try {
       const res = await deleteHackathon(targetHackathon._id);
       if (res.success) {
+        toast.success("Hackathon deleted successfully");
         setMyHackathons((prev) => prev.filter((h) => h._id !== targetHackathon._id));
       }
     } catch (err) {
-      console.error(err);
-      alert("Failed to delete event.");
+      toast.error("Failed to delete event.");
     } finally {
       setDeleting(false);
       setDeleteModalOpen(false);
@@ -216,78 +227,81 @@ const ManageHackathonsPage = () => {
     }
   };
 
-  // RENDER FORM (CREATE OR EDIT)
+  const handleOpenCriteria = (hack) => {
+    setCriteriaHackathon(hack);
+    setCriteriaModalOpen(true);
+  };
+
   if (showCreateForm || editId) {
     return (
-      <div className="space-y-6 max-w-3xl mx-auto animate-in fade-in duration-200">
+      <div className="space-y-6 max-w-3xl mx-auto pb-12">
         <div>
           <button
             onClick={() => navigate("/manage/hackathons")}
-            className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition"
+            className="text-xs font-semibold text-slate-400 hover:text-white transition"
           >
-            &larr; Back to Dashboard list
+            &larr; Back to Hosted Hackathons
           </button>
         </div>
 
-        <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
-          <div className="px-6 py-4 bg-slate-50 border-b border-slate-100">
-            <h2 className="text-base font-bold text-slate-800">
-              {editId ? "Edit Hackathon Settings" : "Host a New Hackathon"}
+        <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+          <div className="px-6 py-5 bg-slate-900/90 border-b border-slate-800">
+            <h2 className="text-lg font-bold text-white">
+              {editId ? "Edit Hackathon Settings" : "Host a New National Hackathon"}
             </h2>
-            <p className="text-4xs text-slate-400 mt-1">
-              Provide event details, schedules, sizes, and platforms.
+            <p className="text-xs text-slate-400 mt-0.5">
+              Configure event scope, timelines, team thresholds, and venues.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {formError && (
-              <div className="p-3.5 bg-rose-50 border border-rose-100 rounded-lg text-xs text-rose-800 font-medium">
+              <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-300 font-medium">
                 {formError}
               </div>
             )}
             {formSuccess && (
-              <div className="p-3.5 bg-emerald-50 border border-emerald-100 rounded-lg text-xs text-emerald-800 font-medium">
+              <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 font-medium">
                 {formSuccess}
               </div>
             )}
 
-            {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                   Hackathon Title *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. InnovateX Global Hackathon"
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  placeholder="e.g. National AI Innovation Challenge 2026"
+                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                   Domain / Category *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. AI / Web3 / Fintech"
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  placeholder="e.g. Artificial Intelligence"
+                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                   value={domain}
                   onChange={(e) => setDomain(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                   Event Mode *
                 </label>
                 <select
                   required
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                   value={mode}
                   onChange={(e) => setMode(e.target.value)}
                 >
@@ -298,87 +312,84 @@ const ManageHackathonsPage = () => {
               </div>
             </div>
 
-            {/* Description */}
             <div>
-              <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
-                Description & Criteria Details *
+              <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
+                Description & Problem Statement *
               </label>
               <textarea
                 required
                 rows={4}
-                placeholder="Briefly describe the hackathon goals, problem statements, and scoring rules..."
-                className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                placeholder="Describe competition goals, problem statements, and scoring rules..."
+                className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500 resize-none leading-relaxed"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
 
-            {/* Timelines */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                   Start Date *
                 </label>
                 <input
                   type="date"
                   required
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                   End Date *
                 </label>
                 <input
                   type="date"
                   required
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                   Registration Deadline *
                 </label>
                 <input
                   type="date"
                   required
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                   value={registrationDeadline}
                   onChange={(e) => setRegistrationDeadline(e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Team Size Requirements & Status */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                   Min Team Size
                 </label>
                 <input
                   type="number"
                   min={1}
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                   value={minTeamSize}
                   onChange={(e) => setMinTeamSize(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                   Max Team Size *
                 </label>
                 <input
                   type="number"
                   min={1}
                   required
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                   value={maxTeamSize}
                   onChange={(e) => setMaxTeamSize(e.target.value)}
                 />
@@ -386,11 +397,11 @@ const ManageHackathonsPage = () => {
 
               {editId && (
                 <div>
-                  <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
+                  <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
                     Event Status
                   </label>
                   <select
-                    className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                   >
@@ -404,23 +415,7 @@ const ManageHackathonsPage = () => {
               )}
             </div>
 
-            {/* Offline location if not Online */}
-            {mode !== "online" && (
-              <div>
-                <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
-                  Location Venue Address
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Innovation Hall, Block C, Bangalore"
-                  className="block w-full text-xs font-medium text-slate-850 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
-                  value={eventLocation}
-                  onChange={(e) => setEventLocation(e.target.value)}
-                />
-              </div>
-            )}
-
-            <div className="flex gap-3 justify-end pt-4 border-t border-slate-50">
+            <div className="flex gap-3 justify-end pt-4 border-t border-slate-800">
               <Button
                 variant="outline"
                 type="button"
@@ -443,25 +438,27 @@ const ManageHackathonsPage = () => {
     );
   }
 
-  // RENDER HACKATHON DASHBOARD LIST
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
-      <PageHeader
-        title="Manage Hosted Hackathons"
-        description="View, configure, edit status, or archive your hosted hackathons."
-        action={
-          <Link to="/manage/hackathons?create=true">
-            <Button variant="primary" icon={Plus}>
-              Host New Event
-            </Button>
-          </Link>
-        }
-      />
+    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            Manage Hosted Hackathons
+          </h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Configure evaluation rubrics, run AI batch scoring, review similarity, and inspect research calibration.
+          </p>
+        </div>
+
+        <Link to="/manage/hackathons?create=true">
+          <Button variant="primary" size="md" icon={Plus}>
+            Host New Event
+          </Button>
+        </Link>
+      </div>
 
       {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <LoadingSpinner size="lg" />
-        </div>
+        <TableSkeleton rows={4} cols={5} />
       ) : error ? (
         <ErrorMessage message={error} retryAction={fetchMyEvents} />
       ) : myHackathons.length === 0 ? (
@@ -477,52 +474,100 @@ const ManageHackathonsPage = () => {
           }
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-3xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-150">
+                <tr className="bg-slate-900/90 text-4xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
                   <th className="px-6 py-4">Title & Domain</th>
                   <th className="px-6 py-4">Timeline</th>
-                  <th className="px-6 py-4">Mode</th>
+                  <th className="px-6 py-4">Rubric Dimensions</th>
                   <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 text-right">Research & Management Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-800/60">
                 {myHackathons.map((hack) => (
-                  <tr key={hack._id} className="hover:bg-slate-50/50 transition">
+                  <tr key={hack._id} className="hover:bg-slate-800/30 transition">
                     <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-slate-800">{hack.title}</p>
-                      <p className="text-3xs text-slate-400 mt-1 capitalize">Domain: {hack.domain}</p>
+                      <p className="text-sm font-bold text-white">{hack.title}</p>
+                      <p className="text-3xs text-brand-400 mt-0.5 capitalize font-mono">Domain: {hack.domain}</p>
                     </td>
-                    <td className="px-6 py-4 text-xs font-semibold text-slate-650">
+
+                    <td className="px-6 py-4 text-xs font-semibold text-slate-300 font-mono">
                       {formatDate(hack.startDate)} – {formatDate(hack.endDate)}
                     </td>
+
                     <td className="px-6 py-4">
-                      <span className="capitalize text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                        {hack.mode}
-                      </span>
+                      <button
+                        onClick={() => handleOpenCriteria(hack)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-semibold rounded-lg bg-brand-500/10 border border-brand-500/30 text-brand-300 hover:bg-brand-500/20 transition"
+                      >
+                        <Sliders className="w-3.5 h-3.5" />
+                        {hack.criteria?.length || 4} Criteria Configured
+                      </button>
                     </td>
+
                     <td className="px-6 py-4">
                       <StatusBadge status={hack.status} />
                     </td>
+
                     <td className="px-6 py-4 text-right">
-                      <div className="flex gap-2 justify-end">
-                        <Link to={`/hackathons/${hack._id}`} title="View event details">
-                          <button className="p-1.5 border border-slate-200 text-slate-500 hover:text-slate-800 bg-white hover:bg-slate-50 rounded transition">
-                            View
+                      <div className="flex gap-2 justify-end items-center flex-wrap">
+                        {/* Evaluation Intelligence Pipeline */}
+                        <Link
+                          to={`/manage/evaluation-intelligence/${hack._id}`}
+                          title="Evaluation Intelligence & Pipeline State"
+                        >
+                          <button className="px-2.5 py-1 text-xs font-medium bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 text-brand-300 rounded-lg transition inline-flex items-center gap-1">
+                            <Brain className="w-3 h-3" />
+                            Intelligence
                           </button>
                         </Link>
-                        <Link to={`/manage/hackathons?edit=${hack._id}`} title="Edit settings">
-                          <button className="p-1.5 border border-slate-200 text-sky-600 hover:text-sky-700 bg-white hover:bg-slate-50 rounded transition">
+
+                        {/* AI Batch Runner */}
+                        <Link
+                          to={`/manage/ai-evaluation/${hack._id}`}
+                          title="Run Automated AI Evaluation"
+                        >
+                          <button className="px-2.5 py-1 text-xs font-medium bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-300 rounded-lg transition inline-flex items-center gap-1">
+                            <Sparkles className="w-3 h-3" />
+                            AI Run
+                          </button>
+                        </Link>
+
+                        {/* Similarity Review */}
+                        <Link
+                          to={`/manage/similarity/${hack._id}`}
+                          title="Semantic Similarity Review"
+                        >
+                          <button className="px-2.5 py-1 text-xs font-medium bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 rounded-lg transition inline-flex items-center gap-1">
+                            <ShieldAlert className="w-3 h-3" />
+                            Similarity
+                          </button>
+                        </Link>
+
+                        {/* Research Metrics */}
+                        <Link
+                          to={`/manage/research-metrics/${hack._id}`}
+                          title="Calibration & Research Metrics"
+                        >
+                          <button className="px-2.5 py-1 text-xs font-medium bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 text-brand-300 rounded-lg transition inline-flex items-center gap-1">
+                            <BarChart3 className="w-3 h-3" />
+                            Metrics
+                          </button>
+                        </Link>
+
+                        <Link to={`/manage/hackathons?edit=${hack._id}`} title="Edit Settings">
+                          <button className="p-1.5 border border-slate-700 text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition">
                             <Edit2 className="w-3.5 h-3.5" />
                           </button>
                         </Link>
+
                         <button
                           onClick={() => triggerDelete(hack)}
-                          className="p-1.5 border border-slate-200 text-rose-600 hover:text-rose-700 bg-white hover:bg-rose-50 rounded transition"
-                          title="Delete hackathon"
+                          className="p-1.5 border border-rose-500/30 text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg transition"
+                          title="Delete Hackathon"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -536,6 +581,16 @@ const ManageHackathonsPage = () => {
         </div>
       )}
 
+      {/* Criteria Configuration Modal */}
+      {criteriaModalOpen && (
+        <HackathonCriteriaModal
+          isOpen={criteriaModalOpen}
+          onClose={() => setCriteriaModalOpen(false)}
+          hackathon={criteriaHackathon}
+          onUpdated={() => fetchMyEvents()}
+        />
+      )}
+
       {/* Delete Confirmation Modal */}
       <ConfirmationModal
         isOpen={deleteModalOpen}
@@ -543,7 +598,7 @@ const ManageHackathonsPage = () => {
         onConfirm={handleConfirmDelete}
         loading={deleting}
         title="Delete Hackathon?"
-        message={`Are you sure you want to delete "${targetHackathon?.title}"? All information about this hackathon will be deleted.`}
+        message={`Are you sure you want to delete "${targetHackathon?.title}"? All associated teams, submissions, and scores will be deleted.`}
         confirmText="Confirm Delete"
         cancelText="Cancel"
       />

@@ -7,17 +7,18 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
 import Button from "../../components/common/Button";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
-import { Check, X, Users, AlertTriangle } from "lucide-react";
+import { TableSkeleton } from "../../components/common/Skeleton";
+import { Check, X, Users, ClipboardCheck, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 const ManageRegistrationsPage = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Approvals/Rejections state
   const [modalOpen, setModalOpen] = useState(false);
   const [targetReg, setTargetReg] = useState(null);
-  const [targetStatus, setTargetStatus] = useState(""); // "approved" or "rejected"
+  const [targetStatus, setTargetStatus] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
 
   const fetchRegistrations = async () => {
@@ -29,8 +30,7 @@ const ManageRegistrationsPage = () => {
         setRegistrations(data.registrations || []);
       }
     } catch (err) {
-      console.error(err);
-      setError("Failed to fetch all registrations. Check connection.");
+      setError("Failed to fetch registrations.");
     } finally {
       setLoading(false);
     }
@@ -52,16 +52,15 @@ const ManageRegistrationsPage = () => {
     try {
       const res = await updateRegistrationStatus(targetReg._id, targetStatus);
       if (res.success) {
-        // Update local state
         setRegistrations((prev) =>
           prev.map((r) =>
             r._id === targetReg._id ? { ...r, status: targetStatus } : r
           )
         );
+        toast.success(`Registration marked as ${targetStatus}`);
       }
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to update registration status.");
+      toast.error(err.response?.data?.message || "Failed to update registration status.");
     } finally {
       setActionLoading(false);
       setModalOpen(false);
@@ -71,29 +70,38 @@ const ManageRegistrationsPage = () => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
-      <PageHeader
-        title="Manage Team Registrations"
-        description="Review and approve/reject team registrations for hosted hackathons."
-      />
+    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+            <ClipboardCheck className="w-3.5 h-3.5" />
+            <span>Organizer Operations</span>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            Manage Team Registrations
+          </h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Review participant registrations, verify eligibility, and approve or reject submissions.
+          </p>
+        </div>
+      </div>
 
       {loading ? (
-        <div className="flex justify-center py-20">
-          <LoadingSpinner size="lg" />
-        </div>
+        <TableSkeleton rows={6} cols={5} />
       ) : error ? (
         <ErrorMessage message={error} retryAction={fetchRegistrations} />
       ) : registrations.length === 0 ? (
         <EmptyState
+          icon={ClipboardCheck}
           title="No registrations found"
-          message="No teams have registered for any hackathons yet."
+          message="No teams have submitted registrations for your hackathons yet."
         />
       ) : (
-        <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
+        <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-3xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-150">
+                <tr className="bg-slate-900/90 text-4xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
                   <th className="px-6 py-4">Hackathon</th>
                   <th className="px-6 py-4">Team Details</th>
                   <th className="px-6 py-4">Registered By</th>
@@ -101,22 +109,22 @@ const ManageRegistrationsPage = () => {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-800/60">
                 {registrations.map((reg) => (
-                  <tr key={reg._id} className="hover:bg-slate-50/50 transition">
+                  <tr key={reg._id} className="hover:bg-slate-800/30 transition">
                     <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-slate-800">{reg.hackathon?.title}</p>
+                      <p className="text-sm font-bold text-white">{reg.hackathon?.title || "Challenge"}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-xs font-semibold text-slate-700">{reg.team?.name}</p>
-                      <p className="text-4xs text-slate-400 mt-1 uppercase flex items-center gap-1">
-                        <Users className="w-3 h-3 text-slate-400" />
-                        {reg.team?.members?.length || 0} Members
+                      <p className="text-xs font-semibold text-slate-200">{reg.team?.name || "Team"}</p>
+                      <p className="text-4xs text-slate-500 font-mono mt-0.5 uppercase flex items-center gap-1">
+                        <Users className="w-3 h-3 text-slate-500" />
+                        {reg.team?.members?.length || 1} Members
                       </p>
                     </td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-650">
-                      {reg.registeredBy?.name}
-                      <p className="text-4xs text-slate-400 mt-0.5">{reg.registeredBy?.email}</p>
+                    <td className="px-6 py-4 text-xs font-medium text-slate-300">
+                      {reg.registeredBy?.name || "Applicant"}
+                      <p className="text-4xs text-slate-500 font-mono mt-0.5">{reg.registeredBy?.email}</p>
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={reg.status} />
@@ -126,21 +134,21 @@ const ManageRegistrationsPage = () => {
                         <div className="flex gap-2 justify-end">
                           <button
                             onClick={() => triggerStatusChange(reg, "approved")}
-                            className="p-1.5 border border-slate-200 text-emerald-600 hover:text-emerald-700 bg-white hover:bg-emerald-50 rounded transition"
+                            className="p-1.5 border border-emerald-500/30 text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg transition"
                             title="Approve registration"
                           >
                             <Check className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => triggerStatusChange(reg, "rejected")}
-                            className="p-1.5 border border-slate-200 text-rose-600 hover:text-rose-700 bg-white hover:bg-rose-50 rounded transition"
+                            className="p-1.5 border border-rose-500/30 text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg transition"
                             title="Reject registration"
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       ) : (
-                        <span className="text-3xs text-slate-400 font-semibold uppercase">Closed</span>
+                        <span className="text-3xs text-slate-500 font-mono uppercase">Processed</span>
                       )}
                     </td>
                   </tr>
@@ -151,7 +159,6 @@ const ManageRegistrationsPage = () => {
         </div>
       )}
 
-      {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

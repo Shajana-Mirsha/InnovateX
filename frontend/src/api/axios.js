@@ -23,16 +23,15 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response Interceptor: Handle 401/403 errors (Unauthorized/Expired)
+// Response Interceptor: Handle 401 Unauthorized (Expired/Invalid Token)
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Clear localStorage and redirect to login
+    if (error.response && error.response.status === 401) {
+      // Clear localStorage and redirect to login only on 401 Unauthorized
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       
-      // We check if we are not already on the login or register pages to avoid infinite loops
       const currentPath = window.location.pathname;
       if (currentPath !== "/login" && currentPath !== "/register" && currentPath !== "/") {
         window.location.href = "/login?expired=true";

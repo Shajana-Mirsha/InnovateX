@@ -2,17 +2,23 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getLeaderboard
+  getLeaderboard,
+  getRankingComparison
 } = require("../controllers/leaderboardController");
 
 const protect = require("../middleware/authMiddleware");
-const authorize = require("../middleware/roleMiddleware");
+
+// GET THREE-ARM RANKING COMPARISON (AI-ONLY vs HUMAN-ONLY vs HYBRID)
+router.get(
+  "/:hackathonId/ranking-comparison",
+  protect,
+  getRankingComparison
+);
 
 // GET LEADERBOARD FOR A HACKATHON
 router.get(
   "/:hackathonId",
   protect,
-  authorize("admin", "organizer", "judge"),
   getLeaderboard
 );
 

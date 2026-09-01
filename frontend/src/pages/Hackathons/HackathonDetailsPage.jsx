@@ -11,6 +11,7 @@ import Button from "../../components/common/Button";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
+import { CardSkeleton } from "../../components/common/Skeleton";
 import { formatDate } from "../../utils/helpers";
 import {
   Calendar,
@@ -23,7 +24,10 @@ import {
   PlusCircle,
   CheckCircle,
   AlertTriangle,
+  Sliders,
+  Sparkles
 } from "lucide-react";
+import { toast } from "sonner";
 
 const HackathonDetailsPage = () => {
   const { id } = useParams();
@@ -33,8 +37,7 @@ const HackathonDetailsPage = () => {
   const [hackathon, setHackathon] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
-  // Registration data
+
   const [myTeams, setMyTeams] = useState([]);
   const [selectedTeamId, setSelectedTeamId] = useState("");
   const [myRegs, setMyRegs] = useState([]);
@@ -42,10 +45,7 @@ const HackathonDetailsPage = () => {
   const [regSuccess, setRegSuccess] = useState("");
   const [regError, setRegError] = useState("");
 
-  // Results data
   const [results, setResults] = useState([]);
-
-  // Modal deletion state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -58,25 +58,22 @@ const HackathonDetailsPage = () => {
         setHackathon(hackRes.hackathon);
       }
 
-      // Fetch results
       try {
         const resultsRes = await getHackathonResults(id);
         if (resultsRes.success) {
           setResults(resultsRes.results || []);
         }
       } catch (err) {
-        console.warn("Could not fetch results (might not be declared yet):", err);
+        // No results declared yet
       }
 
-      // Fetch user specific data if logged in
       if (user) {
-        // Fetch teams led by user that belong to this hackathon
         const teamsRes = await getAllTeams();
         if (teamsRes.success) {
           const eligibleTeams = (teamsRes.teams || []).filter(
             (t) =>
-              t.leader?._id === user.id &&
-              t.hackathon?._id === id
+              (t.leader?._id || t.leader) === user.id &&
+              (t.hackathon?._id || t.hackathon) === id
           );
           setMyTeams(eligibleTeams);
           if (eligibleTeams.length > 0) {
@@ -84,17 +81,15 @@ const HackathonDetailsPage = () => {
           }
         }
 
-        // Fetch my registrations
         const myRegsRes = await getMyRegistrations();
         if (myRegsRes.success) {
           const hackRegs = (myRegsRes.registrations || []).filter(
-            (r) => r.hackathon?._id === id
+            (r) => (r.hackathon?._id || r.hackathon) === id
           );
           setMyRegs(hackRegs);
         }
       }
     } catch (err) {
-      console.error(err);
       setError("Failed to fetch hackathon details.");
     } finally {
       setLoading(false);
@@ -118,12 +113,10 @@ const HackathonDetailsPage = () => {
     try {
       const res = await registerTeam(id, selectedTeamId);
       if (res.success) {
-        setRegSuccess("Team registered successfully! Awaiting organizer approval.");
-        
-        // Refresh registrations list
+        toast.success("Team registered successfully! Awaiting organizer approval.");
         const myRegsRes = await getMyRegistrations();
         if (myRegsRes.success) {
-          setMyRegs((myRegsRes.registrations || []).filter((r) => r.hackathon?._id === id));
+          setMyRegs((myRegsRes.registrations || []).filter((r) => (r.hackathon?._id || r.hackathon) === id));
         }
       } else {
         setRegError(res.message || "Registration failed");
@@ -140,11 +133,11 @@ const HackathonDetailsPage = () => {
     try {
       const res = await deleteHackathon(id);
       if (res.success) {
+        toast.success("Hackathon deleted successfully");
         navigate("/hackathons");
       }
     } catch (err) {
-      console.error(err);
-      alert("Failed to delete hackathon");
+      toast.error("Failed to delete hackathon");
     } finally {
       setDeleting(false);
       setDeleteModalOpen(false);
@@ -153,8 +146,8 @@ const HackathonDetailsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <LoadingSpinner size="lg" />
+      <div className="space-y-6 max-w-7xl mx-auto py-8">
+        <CardSkeleton count={2} />
       </div>
     );
   }
@@ -163,56 +156,51 @@ const HackathonDetailsPage = () => {
     return <ErrorMessage message={error || "Hackathon not found"} />;
   }
 
-  // Check if any of user's teams are already registered
-  const registeredTeamIds = myRegs.map((r) => r.team?._id);
   const alreadyRegistered = myRegs.length > 0;
-
-  // Check if registration deadline has passed
   const deadlinePassed = new Date(hackathon.registrationDeadline) < new Date();
   const hackathonCompleted = hackathon.status === "completed";
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
-      {/* Back button */}
+    <div className="space-y-8 max-w-7xl mx-auto pb-12">
       <div>
         <Link
           to="/hackathons"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Hackathons
         </Link>
       </div>
 
-      {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-100 p-6 sm:p-8 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-start">
-        <div className="space-y-3">
+      {/* Header Banner */}
+      <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-6 justify-between items-start">
+        <div className="space-y-3 flex-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="capitalize bg-sky-50 text-sky-600 border border-sky-100 font-bold text-xs px-2.5 py-0.5 rounded-full">
+            <span className="capitalize px-3 py-1 text-xs font-mono font-bold rounded-full bg-slate-800 text-brand-300 border border-slate-700">
               {hackathon.mode}
             </span>
             <StatusBadge status={hackathon.status} />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">{hackathon.title}</h1>
-          <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold">
-            <Layers className="w-4 h-4 text-slate-400" />
-            <span>Domain: <span className="text-slate-700">{hackathon.domain}</span></span>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{hackathon.title}</h1>
+          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
+            <Layers className="w-4 h-4 text-brand-400" />
+            <span>Domain: <strong className="text-slate-200">{hackathon.domain}</strong></span>
           </div>
         </div>
 
-        {/* Organizer actions */}
         {user &&
           (user.role === "admin" ||
             (user.role === "organizer" &&
-              hackathon.createdBy?._id === user.id)) && (
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              (hackathon.createdBy?._id || hackathon.createdBy) === user.id)) && (
+            <div className="flex flex-wrap gap-2 w-full md:w-auto shrink-0">
               <Link to={`/manage/hackathons?edit=${hackathon._id}`} className="flex-1 md:flex-initial">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" size="sm" className="w-full">
                   Edit Event
                 </Button>
               </Link>
               <Button
                 variant="danger"
+                size="sm"
                 onClick={() => setDeleteModalOpen(true)}
                 className="flex-1 md:flex-initial"
               >
@@ -222,72 +210,97 @@ const HackathonDetailsPage = () => {
           )}
       </div>
 
-      {/* MAIN CONTAINER */}
+      {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Description & Winners */}
+        {/* Left Column: Description, Rubric & Winners */}
         <div className="lg:col-span-2 space-y-8">
-          {/* About */}
-          <div className="bg-white rounded-xl border border-slate-100 p-6 shadow-sm">
-            <h2 className="text-base font-bold text-slate-800 border-b border-slate-50 pb-3 mb-4">
-              About the Hackathon
+          <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+            <h2 className="text-base font-bold text-white border-b border-slate-800 pb-3">
+              About the Hackathon Challenge
             </h2>
-            <p className="text-sm text-slate-650 leading-relaxed whitespace-pre-wrap">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
               {hackathon.description}
             </p>
           </div>
 
+          {/* Rubric Criteria Breakdown */}
+          {hackathon.criteria && hackathon.criteria.length > 0 && (
+            <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+              <h2 className="text-base font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
+                <Sliders className="w-4.5 h-4.5 text-brand-400" />
+                Evaluation Rubric & Grading Dimensions
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {hackathon.criteria.map((c) => (
+                  <div
+                    key={c.name}
+                    className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white font-mono capitalize">
+                        {c.name.replace(/([A-Z])/g, " $1")}
+                      </span>
+                      <span className="text-3xs font-mono font-bold px-2 py-0.5 rounded bg-brand-500/10 text-brand-300 border border-brand-500/30">
+                        Weight: {(c.weight * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <p className="text-3xs text-slate-400 leading-relaxed">{c.description}</p>
+                    <p className="text-4xs text-slate-500 font-mono">Max Score: {c.maxScore} pts</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Declared Winners section */}
           {results.length > 0 && (
-            <div className="bg-gradient-to-br from-amber-50/50 to-orange-50/20 rounded-xl border border-amber-100 p-6 shadow-sm">
-              <h2 className="text-base font-extrabold text-amber-900 flex items-center gap-2 mb-6">
-                <Trophy className="w-5 h-5 text-amber-600" />
-                Winners Declared!
+            <div className="glass-panel rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-950/20 to-slate-900/60 p-6 sm:p-8 shadow-xl space-y-6">
+              <h2 className="text-base font-bold text-amber-300 flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-400" />
+                Official Challenge Winners
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* 1st Place */}
                 {results.find((r) => r.position === 1) && (
-                  <div className="p-4 bg-white border border-amber-200 rounded-lg text-center shadow-xs flex flex-col items-center">
+                  <div className="p-5 rounded-2xl bg-slate-900 border border-amber-500/40 text-center flex flex-col items-center">
                     <span className="text-2xl">🥇</span>
-                    <h4 className="mt-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <h4 className="mt-2 text-3xs font-bold text-amber-400 uppercase tracking-wider">
                       First Place
                     </h4>
-                    <p className="mt-1.5 text-sm font-bold text-slate-800">
+                    <p className="mt-1 text-sm font-bold text-white line-clamp-1">
                       {results.find((r) => r.position === 1).submission?.title}
                     </p>
-                    <p className="text-2xs text-slate-500 mt-1">
+                    <p className="text-3xs text-slate-400 mt-1 font-mono">
                       Team: {results.find((r) => r.position === 1).submission?.team?.name || "N/A"}
                     </p>
                   </div>
                 )}
 
-                {/* 2nd Place */}
                 {results.find((r) => r.position === 2) && (
-                  <div className="p-4 bg-white border border-slate-200 rounded-lg text-center shadow-xs flex flex-col items-center">
+                  <div className="p-5 rounded-2xl bg-slate-900 border border-slate-700 text-center flex flex-col items-center">
                     <span className="text-2xl">🥈</span>
-                    <h4 className="mt-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <h4 className="mt-2 text-3xs font-bold text-slate-300 uppercase tracking-wider">
                       Second Place
                     </h4>
-                    <p className="mt-1.5 text-sm font-bold text-slate-800">
+                    <p className="mt-1 text-sm font-bold text-white line-clamp-1">
                       {results.find((r) => r.position === 2).submission?.title}
                     </p>
-                    <p className="text-2xs text-slate-500 mt-1">
+                    <p className="text-3xs text-slate-400 mt-1 font-mono">
                       Team: {results.find((r) => r.position === 2).submission?.team?.name || "N/A"}
                     </p>
                   </div>
                 )}
 
-                {/* 3rd Place */}
                 {results.find((r) => r.position === 3) && (
-                  <div className="p-4 bg-white border border-orange-200 rounded-lg text-center shadow-xs flex flex-col items-center">
+                  <div className="p-5 rounded-2xl bg-slate-900 border border-orange-800/60 text-center flex flex-col items-center">
                     <span className="text-2xl">🥉</span>
-                    <h4 className="mt-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <h4 className="mt-2 text-3xs font-bold text-orange-400 uppercase tracking-wider">
                       Third Place
                     </h4>
-                    <p className="mt-1.5 text-sm font-bold text-slate-800">
+                    <p className="mt-1 text-sm font-bold text-white line-clamp-1">
                       {results.find((r) => r.position === 3).submission?.title}
                     </p>
-                    <p className="text-2xs text-slate-500 mt-1">
+                    <p className="text-3xs text-slate-400 mt-1 font-mono">
                       Team: {results.find((r) => r.position === 3).submission?.team?.name || "N/A"}
                     </p>
                   </div>
@@ -299,38 +312,37 @@ const HackathonDetailsPage = () => {
 
         {/* Right Column: Timelines & Registration Form */}
         <div className="space-y-6">
-          {/* Key details */}
-          <div className="bg-white rounded-xl border border-slate-100 p-6 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-slate-800 border-b border-slate-50 pb-2.5">
-              Event Details
+          <div className="glass-panel rounded-3xl border border-slate-800 p-6 shadow-xl space-y-4">
+            <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-2.5">
+              Event Logistics
             </h3>
 
             <div className="space-y-3.5">
               <div className="flex gap-3 text-xs">
-                <Calendar className="w-4 h-4 text-slate-400 shrink-0" />
+                <Calendar className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-slate-500">Event Timeline</p>
-                  <p className="mt-0.5 text-slate-700 font-medium">
+                  <p className="font-semibold text-slate-400">Timeline</p>
+                  <p className="mt-0.5 text-white font-mono">
                     {formatDate(hackathon.startDate)} – {formatDate(hackathon.endDate)}
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-3 text-xs">
-                <Clock className="w-4 h-4 text-rose-500 shrink-0" />
+                <Clock className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-slate-500">Registration Deadline</p>
-                  <p className="mt-0.5 text-slate-700 font-medium">
+                  <p className="font-semibold text-slate-400">Registration Deadline</p>
+                  <p className="mt-0.5 text-white font-mono">
                     {formatDate(hackathon.registrationDeadline)}
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-3 text-xs">
-                <Users className="w-4 h-4 text-slate-400 shrink-0" />
+                <Users className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-slate-500">Team Size Requirements</p>
-                  <p className="mt-0.5 text-slate-700 font-medium">
+                  <p className="font-semibold text-slate-400">Team Size</p>
+                  <p className="mt-0.5 text-white font-mono">
                     Min: {hackathon.minTeamSize || 1} • Max: {hackathon.maxTeamSize} members
                   </p>
                 </div>
@@ -338,12 +350,10 @@ const HackathonDetailsPage = () => {
 
               {hackathon.mode !== "online" && (
                 <div className="flex gap-3 text-xs">
-                  <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
+                  <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-slate-500">Location</p>
-                    <p className="mt-0.5 text-slate-700 font-medium">
-                      {hackathon.location || "Offline Event"}
-                    </p>
+                    <p className="font-semibold text-slate-400">Venue</p>
+                    <p className="mt-0.5 text-white">{hackathon.location || "Offline Location"}</p>
                   </div>
                 </div>
               )}
@@ -352,56 +362,54 @@ const HackathonDetailsPage = () => {
 
           {/* Registration Section for Participant */}
           {user && user.role === "participant" && !hackathonCompleted && (
-            <div className="bg-white rounded-xl border border-slate-100 p-6 shadow-sm space-y-4">
-              <h3 className="text-sm font-bold text-slate-800 border-b border-slate-50 pb-2.5">
+            <div className="glass-panel rounded-3xl border border-slate-800 p-6 shadow-xl space-y-4">
+              <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-2.5">
                 Register Your Team
               </h3>
 
               {alreadyRegistered ? (
                 <div className="space-y-3">
-                  <div className="p-3 bg-slate-50 border border-slate-100 rounded-lg">
-                    <p className="text-3xs text-slate-400 uppercase font-semibold">Registered Team</p>
-                    <p className="text-xs font-bold text-slate-850 mt-1">{myRegs[0].team?.name}</p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-3xs text-slate-500">Status</span>
+                  <div className="p-4 bg-slate-950/60 border border-slate-800 rounded-2xl space-y-2">
+                    <p className="text-4xs text-slate-400 uppercase font-semibold">Registered Team</p>
+                    <p className="text-sm font-bold text-white">{myRegs[0].team?.name}</p>
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="text-xs text-slate-400">Approval Status</span>
                       <StatusBadge status={myRegs[0].status} />
                     </div>
                   </div>
 
                   {myRegs[0].status === "approved" && (
-                    <div className="pt-2">
-                      <Link to="/submissions/create" className="w-full block">
-                        <Button variant="primary" className="w-full">
-                          Submit Project Solution
-                        </Button>
-                      </Link>
-                    </div>
+                    <Link to="/submissions/create" className="w-full block pt-1">
+                      <Button variant="primary" size="md" className="w-full">
+                        Submit Project Solution
+                      </Button>
+                    </Link>
                   )}
                 </div>
               ) : deadlinePassed ? (
-                <div className="flex gap-2 p-3 bg-rose-50 border border-rose-100 text-rose-700 rounded-lg text-xs leading-normal">
+                <div className="flex gap-2 p-4 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-2xl text-xs">
                   <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <span>Registrations are closed. The deadline has passed.</span>
+                  <span>Registrations are closed for this challenge.</span>
                 </div>
               ) : myTeams.length === 0 ? (
                 <div className="space-y-4">
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    You must lead a team formed for this hackathon to register.
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    You must lead a team created for this hackathon to register.
                   </p>
                   <Link to="/teams/create" className="block w-full">
-                    <Button variant="outline" icon={PlusCircle} className="w-full text-sky-600 border-sky-200">
-                      Create a Team
+                    <Button variant="outline" size="sm" icon={PlusCircle} className="w-full">
+                      Create Team for Challenge
                     </Button>
                   </Link>
                 </div>
               ) : (
                 <form onSubmit={handleRegisterTeam} className="space-y-4">
                   <div>
-                    <label className="block text-3xs font-semibold text-slate-500 uppercase mb-2">
-                      Select Team
+                    <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
+                      Select Leading Team
                     </label>
                     <select
-                      className="block w-full text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                      className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
                       value={selectedTeamId}
                       onChange={(e) => setSelectedTeamId(e.target.value)}
                     >
@@ -413,16 +421,17 @@ const HackathonDetailsPage = () => {
                     </select>
                   </div>
 
-                  {regError && <p className="text-xs text-rose-600">{regError}</p>}
-                  {regSuccess && <p className="text-xs text-emerald-600">{regSuccess}</p>}
+                  {regError && <p className="text-xs text-rose-400">{regError}</p>}
+                  {regSuccess && <p className="text-xs text-emerald-400">{regSuccess}</p>}
 
                   <Button
                     type="submit"
                     variant="primary"
+                    size="md"
                     className="w-full"
                     loading={registering}
                   >
-                    Submit Registration
+                    Submit Team Registration
                   </Button>
                 </form>
               )}
@@ -431,14 +440,13 @@ const HackathonDetailsPage = () => {
         </div>
       </div>
 
-      {/* Delete confirmation modal */}
       <ConfirmationModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleDeleteHackathon}
         loading={deleting}
         title="Delete Hackathon?"
-        message={`Are you sure you want to delete "${hackathon.title}"? This will permanently delete the hackathon event.`}
+        message={`Are you sure you want to delete "${hackathon.title}"?`}
         confirmText="Yes, Delete"
         cancelText="Cancel"
       />
