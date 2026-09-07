@@ -15,23 +15,23 @@ const Button = ({
   ...props
 }) => {
   const baseStyle =
-    "inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variants = {
     primary:
-      "bg-brand-600 hover:bg-brand-500 text-white border border-brand-500/30 focus:ring-brand-500 shadow-md shadow-brand-600/20",
+      "bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white border border-transparent",
     secondary:
-      "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 focus:ring-slate-500",
+      "bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium focus:ring-2 focus:ring-slate-400 border border-slate-200",
     outline:
-      "bg-transparent hover:bg-slate-800/60 text-slate-300 border border-slate-700 hover:border-slate-600 focus:ring-brand-500",
+      "bg-white hover:bg-slate-50 text-slate-700 font-medium border border-slate-300 hover:border-slate-400 focus:ring-2 focus:ring-blue-500 shadow-sm",
     danger:
-      "bg-rose-600 hover:bg-rose-500 text-white border border-rose-500/30 focus:ring-rose-500 shadow-md shadow-rose-600/20",
+      "bg-rose-600 hover:bg-rose-700 text-white font-medium shadow-sm focus:ring-2 focus:ring-rose-500",
     success:
-      "bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/30 focus:ring-emerald-500 shadow-md shadow-emerald-600/20",
+      "bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm focus:ring-2 focus:ring-emerald-500",
     ghost:
-      "bg-transparent hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 focus:ring-slate-500",
+      "bg-transparent hover:bg-slate-100 text-slate-600 hover:text-slate-900 font-medium",
     amber:
-      "bg-amber-600 hover:bg-amber-500 text-white border border-amber-500/30 focus:ring-amber-500 shadow-md shadow-amber-600/20"
+      "bg-amber-600 hover:bg-amber-700 text-white font-medium shadow-sm focus:ring-2 focus:ring-amber-500"
   };
 
   const sizes = {
@@ -43,7 +43,6 @@ const Button = ({
   return (
     <motion.button
       whileTap={!disabled && !loading ? { scale: 0.98 } : {}}
-      whileHover={!disabled && !loading ? { scale: 1.01 } : {}}
       type={type}
       className={`${baseStyle} ${variants[variant] || variants.primary} ${sizes[size]} ${className}`}
       disabled={disabled || loading}
@@ -51,7 +50,7 @@ const Button = ({
       {...props}
     >
       {loading ? (
-        <LoadingSpinner size="sm" color="white" className="mr-2" />
+        <LoadingSpinner size="sm" color={variant === "outline" || variant === "ghost" || variant === "secondary" ? "blue" : "white"} className="mr-2" />
       ) : Icon ? (
         <Icon className="w-4 h-4 shrink-0" />
       ) : null}

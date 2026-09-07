@@ -80,10 +80,18 @@ const registerTeam = async (req, res) => {
 };
 
 
-// GET ALL REGISTRATIONS
+// GET ALL REGISTRATIONS (ADMIN: ALL, ORGANIZER: ONLY OWN HACKATHONS)
 const getAllRegistrations = async (req, res) => {
   try {
-    const registrations = await Registration.find()
+    let query = {};
+
+    if (req.user.role === "organizer") {
+      const myHackathons = await Hackathon.find({ createdBy: req.user._id }).select("_id");
+      const myHackathonIds = myHackathons.map((h) => h._id);
+      query = { hackathon: { $in: myHackathonIds } };
+    }
+
+    const registrations = await Registration.find(query)
       .populate("hackathon", "title")
       .populate("team", "name members")
       .populate("registeredBy", "name email");
@@ -103,14 +111,27 @@ const getAllRegistrations = async (req, res) => {
 };
 
 
-// GET MY REGISTRATIONS
+// GET MY REGISTRATIONS (VISIBLE TO ALL TEAM MEMBERS)
 const getMyRegistrations = async (req, res) => {
   try {
+    // Find all teams where current user is a leader or member
+    const userTeams = await Team.find({
+      $or: [
+        { leader: req.user._id },
+        { members: req.user._id }
+      ]
+    }).select("_id");
+
+    const userTeamIds = userTeams.map((t) => t._id);
+
     const registrations = await Registration.find({
-      registeredBy: req.user._id
+      $or: [
+        { registeredBy: req.user._id },
+        { team: { $in: userTeamIds } }
+      ]
     })
-      .populate("hackathon", "title startDate endDate")
-      .populate("team", "name members status");
+      .populate("hackathon", "title startDate endDate status")
+      .populate("team", "name members status leader");
 
     res.status(200).json({
       success: true,
@@ -127,7 +148,7 @@ const getMyRegistrations = async (req, res) => {
 };
 
 
-// APPROVE OR REJECT REGISTRATION
+// APPROVE OR REJECT REGISTRATION (OWNER OR ADMIN ONLY)
 const updateRegistrationStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -139,7 +160,8 @@ const updateRegistrationStatus = async (req, res) => {
       });
     }
 
-    const registration = await Registration.findById(req.params.id);
+    const registration = await Registration.findById(req.params.id)
+      .populate("hackathon");
 
     if (!registration) {
       return res.status(404).json({
@@ -148,12 +170,23 @@ const updateRegistrationStatus = async (req, res) => {
       });
     }
 
+    // Ownership check: only event creator or admin can approve/reject
+    if (
+      req.user.role !== "admin" &&
+      registration.hackathon?.createdBy?.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to manage registrations for this hackathon"
+      });
+    }
+
     registration.status = status;
     await registration.save();
 
     // Get team and hackathon details for notification
     const team = await Team.findById(registration.team);
-    const hackathon = await Hackathon.findById(registration.hackathon);
+    const hackathon = registration.hackathon;
 
     // Notify team leader
     if (team && hackathon) {

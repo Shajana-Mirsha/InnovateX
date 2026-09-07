@@ -35,6 +35,17 @@ const declareResult = async (req, res) => {
       });
     }
 
+    // Ownership check: only event creator or admin can declare results
+    if (
+      req.user.role !== "admin" &&
+      hackathon.createdBy.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to declare results for this hackathon"
+      });
+    }
+
     // Check submission
     const submission = await Submission.findById(submissionId);
 
@@ -156,12 +167,23 @@ const getHackathonResults = async (req, res) => {
 // DELETE A RESULT
 const deleteResult = async (req, res) => {
   try {
-    const result = await Result.findById(req.params.id);
+    const result = await Result.findById(req.params.id).populate("hackathon");
 
     if (!result) {
       return res.status(404).json({
         success: false,
         message: "Result not found"
+      });
+    }
+
+    // Ownership check: only event creator or admin can delete results
+    if (
+      req.user.role !== "admin" &&
+      result.hackathon?.createdBy?.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to delete results for this hackathon"
       });
     }
 

@@ -75,6 +75,14 @@ const createSubmission = async (req, res) => {
       });
     }
 
+    // Deadline check: do not allow submissions after hackathon end date
+    if (hackathon.status === "completed" || new Date(hackathon.endDate) < new Date()) {
+      return res.status(403).json({
+        success: false,
+        message: "The submission deadline for this hackathon has passed"
+      });
+    }
+
     const existingSubmission = await Submission.findOne({
       hackathon: hackathonId,
       team: teamId
@@ -115,12 +123,36 @@ const createSubmission = async (req, res) => {
 };
 
 
-// GET ALL SUBMISSIONS
+// GET ALL SUBMISSIONS (SCOPED BY ROLE)
 const getAllSubmissions = async (req, res) => {
   try {
-    const submissions = await Submission.find()
-      .populate("hackathon", "title")
-      .populate("team", "name")
+    const { hackathonId } = req.query;
+    let query = {};
+
+    if (hackathonId) {
+      query.hackathon = hackathonId;
+    }
+
+    // Participants only receive their own teams' submissions
+    if (req.user && req.user.role === "participant") {
+      const userTeams = await Team.find({
+        $or: [
+          { leader: req.user._id },
+          { members: req.user._id }
+        ]
+      }).select("_id");
+
+      const userTeamIds = userTeams.map((t) => t._id);
+
+      query.$or = [
+        { submittedBy: req.user._id },
+        { team: { $in: userTeamIds } }
+      ];
+    }
+
+    const submissions = await Submission.find(query)
+      .populate("hackathon", "title criteria startDate endDate status")
+      .populate("team", "name leader members")
       .populate("submittedBy", "name email")
       .populate("similarityFlags.submission", "title team");
 
@@ -291,7 +323,8 @@ const getSubmissionFeedback = async (req, res) => {
 // UPDATE SUBMISSION
 const updateSubmission = async (req, res) => {
   try {
-    const submission = await Submission.findById(req.params.id);
+    const submission = await Submission.findById(req.params.id)
+      .populate("hackathon");
 
     if (!submission) {
       return res.status(404).json({
@@ -307,6 +340,17 @@ const updateSubmission = async (req, res) => {
       return res.status(403).json({
         success: false,
         message: "You are not allowed to update this submission"
+      });
+    }
+
+    // Deadline check: do not allow updates after competition end date
+    if (
+      submission.hackathon?.status === "completed" ||
+      (submission.hackathon?.endDate && new Date(submission.hackathon.endDate) < new Date())
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Submissions can no longer be edited as the competition deadline has passed"
       });
     }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import LoadingSpinner from "../components/common/LoadingSpinner";
 
@@ -18,12 +18,12 @@ const RoleProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (!allowedRoles.includes(user.role)) {
+  if (!user || !allowedRoles.includes(user.role)) {
     // If not authorized, redirect to dashboard
     return <Navigate to="/dashboard" replace />;
   }
 
-  return children;
+  return children ? children : <Outlet />;
 };
 
 export default RoleProtectedRoute;

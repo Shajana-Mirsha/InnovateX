@@ -5,6 +5,12 @@ export const getAllTeams = async () => {
   return response.data;
 };
 
+export const getMyTeams = async (hackathonId) => {
+  const url = hackathonId ? `/teams/my-teams?hackathonId=${hackathonId}` : "/teams/my-teams";
+  const response = await axiosInstance.get(url);
+  return response.data;
+};
+
 export const getTeamById = async (id) => {
   const response = await axiosInstance.get(`/teams/${id}`);
   return response.data;

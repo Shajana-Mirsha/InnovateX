@@ -20,11 +20,29 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Test route
+// Health check routes
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "InnovateX API is running"
+    status: "healthy",
+    message: "InnovateX API is running",
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "healthy",
+    timestamp: new Date().toISOString()
+  });
+});
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "healthy",
+    timestamp: new Date().toISOString()
   });
 });
 

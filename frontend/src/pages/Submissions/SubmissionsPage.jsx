@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
 import { getSubmissions } from "../../api/submissionApi";
 import { getAllTeams } from "../../api/teamApi";
 import SubmissionFeedbackModal from "./SubmissionFeedbackModal";
-import PageHeader from "../../components/common/PageHeader";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
@@ -31,28 +29,7 @@ const SubmissionsPage = () => {
       const subRes = await getSubmissions();
       
       if (subRes.success) {
-        let list = subRes.submissions || [];
-        
-        if (user.role === "participant") {
-          const teamRes = await getAllTeams();
-          if (teamRes.success) {
-            const userTeamIds = (teamRes.teams || [])
-              .filter(
-                (t) =>
-                  t.leader?._id === user.id ||
-                  t.members?.some((m) => m._id === user.id)
-              )
-              .map((t) => t._id);
-
-            list = list.filter(
-              (s) =>
-                s.submittedBy?._id === user.id ||
-                userTeamIds.includes(s.team?._id)
-            );
-          }
-        }
-        
-        setSubmissions(list);
+        setSubmissions(subRes.submissions || []);
       }
     } catch (err) {
       console.error(err);
@@ -72,17 +49,17 @@ const SubmissionsPage = () => {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
             <FileCode className="w-3.5 h-3.5" />
             <span>Research Projects & Submissions</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             {user.role === "participant" ? "My Project Submissions" : "All Challenge Submissions"}
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             {user.role === "participant"
               ? "View project implementations, AI evaluations, and validated judging feedback."
               : "Review project submissions, codebases, and evaluation statuses."}
@@ -120,44 +97,41 @@ const SubmissionsPage = () => {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {submissions.map((sub, idx) => (
-            <motion.div
+          {submissions.map((sub) => (
+            <div
               key={sub._id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              className="glass-panel border border-slate-800/80 rounded-3xl overflow-hidden hover:border-slate-700 transition flex flex-col justify-between"
+              className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-md transition flex flex-col justify-between shadow-sm"
             >
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-3xs font-semibold text-brand-400 uppercase tracking-wider">
+                  <span className="text-2xs font-semibold text-blue-600 uppercase tracking-wider">
                     {sub.hackathon?.title || "National Challenge"}
                   </span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 text-4xs font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase">
+                  <span className="inline-flex items-center px-2.5 py-0.5 text-2xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase">
                     Submitted
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-base font-bold text-white line-clamp-1">
+                  <h3 className="text-base font-bold text-slate-900 line-clamp-1">
                     {sub.title}
                   </h3>
-                  <p className="text-xs text-slate-400 mt-2 line-clamp-3 leading-relaxed">
+                  <p className="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed">
                     {sub.description}
                   </p>
                 </div>
 
-                <div className="flex flex-wrap gap-4 pt-3 border-t border-slate-800/60 text-3xs text-slate-400 font-semibold">
+                <div className="flex flex-wrap gap-4 pt-3 border-t border-slate-100 text-xs text-slate-500">
                   <div className="flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Team: <strong className="text-slate-300">{sub.team?.name || "N/A"}</strong></span>
+                    <Layers className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Team: <strong className="text-slate-800">{sub.team?.name || "N/A"}</strong></span>
                   </div>
                   {sub.githubLink && (
                     <a
                       href={sub.githubLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition"
+                      className="flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-medium transition"
                     >
                       <FileCode className="w-3.5 h-3.5" />
                       GitHub Repo
@@ -168,26 +142,26 @@ const SubmissionsPage = () => {
               </div>
 
               {/* Card Footer Actions */}
-              <div className="px-6 py-4 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between">
+              <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
                 <Button
                   variant="outline"
                   size="sm"
                   icon={MessageSquare}
                   onClick={() => handleOpenFeedback(sub._id)}
-                  className="text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/10"
+                  className="text-emerald-700 border-emerald-200 hover:bg-emerald-50 bg-white"
                 >
                   View Evaluation Feedback
                 </Button>
 
                 <Link
                   to={`/submissions/${sub._id}`}
-                  className="text-xs font-bold text-brand-400 hover:text-brand-300 inline-flex items-center gap-1"
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 transition"
                 >
                   Details
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

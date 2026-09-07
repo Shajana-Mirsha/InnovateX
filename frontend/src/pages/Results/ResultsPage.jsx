@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { getHackathonResults } from "../../api/resultApi";
 import { getAllHackathons } from "../../api/hackathonApi";
-import PageHeader from "../../components/common/PageHeader";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
@@ -82,17 +81,17 @@ const ResultsPage = () => {
   const thirdPlace = results.find((r) => r.position === 3);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
             <Trophy className="w-3.5 h-3.5" />
             <span>Honors & Ceremonies</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             Official Winners & Results
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Check official declared rankings, winning projects, and podium positions.
           </p>
         </div>
@@ -107,14 +106,14 @@ const ResultsPage = () => {
       </div>
 
       {/* Select Hackathon Event */}
-      <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <span className="text-xs font-bold text-slate-300 shrink-0">Select Hackathon Event:</span>
+      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <span className="text-xs font-bold text-slate-700 shrink-0">Select Hackathon Event:</span>
         <div className="w-full sm:w-80">
           {hackathons.length === 0 ? (
-            <p className="text-xs text-rose-400 font-semibold">No hackathons listed</p>
+            <p className="text-xs text-rose-600 font-medium">No hackathons listed</p>
           ) : (
             <select
-              className="w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 focus:border-brand-500 focus:outline-none"
+              className="w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 focus:border-blue-500 focus:bg-white focus:outline-none transition"
               value={selectedHackathonId}
               onChange={(e) => setSelectedHackathonId(e.target.value)}
             >
@@ -142,20 +141,20 @@ const ResultsPage = () => {
           message="The challenge organizers have not declared official winners for this event yet."
         />
       ) : (
-        <div className="space-y-8 max-w-4xl mx-auto">
+        <div className="space-y-6 max-w-4xl mx-auto">
           {/* Visual podium */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-end pt-8">
             {/* 2nd Place */}
             {secondPlace && (
-              <div className="order-2 sm:order-1 p-6 glass-panel border border-slate-700 rounded-3xl text-center flex flex-col items-center sm:h-48 justify-center relative shadow-lg">
+              <div className="order-2 sm:order-1 p-6 bg-white border border-slate-200 rounded-2xl text-center flex flex-col items-center sm:h-48 justify-center relative shadow-sm">
                 <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-3xl">🥈</span>
-                <h4 className="mt-2 text-3xs font-extrabold text-slate-400 uppercase tracking-widest">
+                <h4 className="mt-2 text-2xs font-bold text-slate-500 uppercase tracking-widest">
                   Second Place
                 </h4>
-                <p className="mt-2 text-base font-bold text-white line-clamp-1">
+                <p className="mt-2 text-base font-bold text-slate-900 line-clamp-1">
                   {secondPlace.submission?.title}
                 </p>
-                <p className="text-3xs text-slate-400 mt-1 font-mono">
+                <p className="text-xs text-slate-500 mt-1">
                   Team: {secondPlace.submission?.team?.name || "N/A"}
                 </p>
               </div>
@@ -163,16 +162,16 @@ const ResultsPage = () => {
 
             {/* 1st Place */}
             {firstPlace && (
-              <div className="order-1 sm:order-2 p-6 rounded-3xl bg-gradient-to-br from-amber-500/20 via-slate-900 to-slate-900 border border-amber-500/50 shadow-2xl text-center flex flex-col items-center sm:h-56 justify-center relative ring-2 ring-amber-400/30">
+              <div className="order-1 sm:order-2 p-6 rounded-2xl bg-amber-50/40 border-2 border-amber-300 shadow-md text-center flex flex-col items-center sm:h-56 justify-center relative">
                 <span className="absolute -top-7 left-1/2 -translate-x-1/2 text-4xl animate-bounce">👑</span>
                 <span className="text-2xl mt-2">🥇</span>
-                <h4 className="mt-2 text-3xs font-extrabold text-amber-400 uppercase tracking-widest font-mono">
+                <h4 className="mt-2 text-2xs font-extrabold text-amber-700 uppercase tracking-widest">
                   First Place Winner
                 </h4>
-                <p className="mt-2 text-lg font-bold text-white line-clamp-1">
+                <p className="mt-2 text-lg font-bold text-slate-900 line-clamp-1">
                   {firstPlace.submission?.title}
                 </p>
-                <p className="text-3xs text-amber-300 mt-1 font-mono font-semibold">
+                <p className="text-xs text-amber-800 mt-1 font-semibold">
                   Team: {firstPlace.submission?.team?.name || "N/A"}
                 </p>
               </div>
@@ -180,15 +179,15 @@ const ResultsPage = () => {
 
             {/* 3rd Place */}
             {thirdPlace && (
-              <div className="order-3 p-6 glass-panel border border-orange-800/60 rounded-3xl text-center flex flex-col items-center sm:h-44 justify-center relative shadow-lg">
+              <div className="order-3 p-6 bg-white border border-amber-100 rounded-2xl text-center flex flex-col items-center sm:h-44 justify-center relative shadow-sm">
                 <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-3xl">🥉</span>
-                <h4 className="mt-2 text-3xs font-extrabold text-orange-400 uppercase tracking-widest">
+                <h4 className="mt-2 text-2xs font-bold text-amber-600 uppercase tracking-widest">
                   Third Place
                 </h4>
-                <p className="mt-2 text-base font-bold text-white line-clamp-1">
+                <p className="mt-2 text-base font-bold text-slate-900 line-clamp-1">
                   {thirdPlace.submission?.title}
                 </p>
-                <p className="text-3xs text-slate-400 mt-1 font-mono">
+                <p className="text-xs text-slate-500 mt-1">
                   Team: {thirdPlace.submission?.team?.name || "N/A"}
                 </p>
               </div>
@@ -196,27 +195,27 @@ const ResultsPage = () => {
           </div>
 
           {/* List display */}
-          <div className="glass-panel border border-slate-800 rounded-3xl shadow-xl overflow-hidden">
-            <div className="px-6 py-4 bg-slate-900/90 border-b border-slate-800">
-              <h4 className="text-sm font-bold text-white">All Declared Rankings</h4>
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
+              <h4 className="text-sm font-bold text-slate-900">All Declared Rankings</h4>
             </div>
-            <div className="divide-y divide-slate-800/60">
+            <div className="divide-y divide-slate-100">
               {results.map((res) => (
-                <div key={res._id} className="px-6 py-4 flex items-center justify-between gap-4">
+                <div key={res._id} className="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-50 transition">
                   <div className="flex items-center gap-3">
                     <span className="text-xl">
                       {res.position === 1 ? "🥇" : res.position === 2 ? "🥈" : res.position === 3 ? "🥉" : "🏆"}
                     </span>
                     <div>
-                      <p className="text-sm font-bold text-white">
+                      <p className="text-sm font-bold text-slate-900">
                         {res.submission?.title}
                       </p>
-                      <p className="text-3xs text-slate-400 mt-0.5 font-mono">
+                      <p className="text-xs text-slate-500 mt-0.5">
                         Team: {res.submission?.team?.name || "N/A"} • Position #{res.position}
                       </p>
                     </div>
                   </div>
-                  <span className="text-4xs text-slate-500 font-mono">
+                  <span className="text-2xs text-slate-400 font-medium">
                     Declared by: {res.declaredBy?.name || "Organizer"}
                   </span>
                 </div>

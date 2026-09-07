@@ -44,20 +44,22 @@ const ProfilePage = () => {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
-      <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
-        <User className="w-3.5 h-3.5" />
-        <span>Account & Permissions</span>
+      <div>
+        <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
+          <User className="w-3.5 h-3.5" />
+          <span>Account & Permissions</span>
+        </div>
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+          User Profile & Role Privileges
+        </h1>
       </div>
-      <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-        User Profile & Role Privileges
-      </h1>
 
-      <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
         {/* Profile header visual */}
-        <div className="h-32 bg-gradient-to-r from-brand-600 to-indigo-700 relative">
+        <div className="h-32 bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 relative">
           <div className="absolute -bottom-10 left-8">
-            <div className="w-20 h-20 rounded-2xl bg-slate-900 p-1 shadow-2xl border border-slate-700">
-              <div className="w-full h-full rounded-xl bg-brand-500/20 text-brand-300 flex items-center justify-center font-bold text-2xl font-mono">
+            <div className="w-20 h-20 rounded-2xl bg-white p-1 shadow-md border border-slate-200">
+              <div className="w-full h-full rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-2xl font-mono">
                 {user.name ? user.name.substring(0, 2).toUpperCase() : "U"}
               </div>
             </div>
@@ -66,26 +68,26 @@ const ProfilePage = () => {
 
         {/* Profile info fields */}
         <div className="pt-14 p-8 space-y-6">
-          <div className="border-b border-slate-800 pb-5">
-            <h2 className="text-xl font-bold text-white">{user.name}</h2>
-            <p className="text-xs text-slate-400 capitalize font-mono mt-1">
-              Account Privilege: <strong className="text-brand-300">{user.role}</strong>
+          <div className="border-b border-slate-200 pb-5">
+            <h2 className="text-xl font-bold text-slate-900">{user.name}</h2>
+            <p className="text-xs text-slate-500 capitalize font-mono mt-1">
+              Account Privilege: <strong className="text-blue-600 font-bold">{user.role}</strong>
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-1 text-xs">
-              <p className="font-semibold text-slate-400 uppercase tracking-wider">Email Address</p>
-              <div className="flex items-center gap-2 mt-1.5 text-white font-mono font-medium">
-                <Mail className="w-4 h-4 text-brand-400" />
+              <p className="font-semibold text-slate-500 uppercase tracking-wider">Email Address</p>
+              <div className="flex items-center gap-2 mt-1.5 text-slate-900 font-mono font-medium text-sm">
+                <Mail className="w-4 h-4 text-blue-600" />
                 <span>{user.email}</span>
               </div>
             </div>
 
             <div className="space-y-1 text-xs">
-              <p className="font-semibold text-slate-400 uppercase tracking-wider">System Authorization</p>
-              <div className="flex items-center gap-2 mt-1.5 text-white font-medium">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <p className="font-semibold text-slate-500 uppercase tracking-wider">System Authorization</p>
+              <div className="flex items-center gap-2 mt-1.5 text-slate-900 font-medium text-sm">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 <span className="capitalize">{user.role} Active Authorization</span>
               </div>
             </div>
@@ -94,16 +96,16 @@ const ProfilePage = () => {
       </div>
 
       {/* Role-based permissions info */}
-      <div className="glass-panel border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
-        <h3 className="text-base font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-          <Award className="w-4.5 h-4.5 text-brand-400" />
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
+        <h3 className="text-base font-bold text-slate-900 border-b border-slate-200 pb-3 flex items-center gap-2">
+          <Award className="w-4.5 h-4.5 text-blue-600" />
           Authorized Platform Capabilities
         </h3>
 
-        <ul className="space-y-3 text-xs text-slate-300">
+        <ul className="space-y-3 text-sm text-slate-600">
           {capabilities.map((cap, idx) => (
             <li key={idx} className="flex items-start gap-2.5 leading-relaxed">
-              <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>{cap}</span>
             </li>
           ))}

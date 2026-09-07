@@ -260,15 +260,15 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
-        className="w-full max-w-5xl glass-panel bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden my-8"
+        className="w-full max-w-5xl bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden my-8"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-800 bg-slate-900/90">
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-slate-50">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               {score ? (
@@ -276,26 +276,26 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                   status={score.source === "human" ? "human_validated" : "ai_scored"}
                 />
               ) : (
-                <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                   Independent Grading Mode
                 </span>
               )}
               {score?.model && (
-                <span className="text-3xs font-mono text-slate-400">
+                <span className="text-xs font-mono text-slate-500">
                   AI Model: {score.model} (v{score.promptVersion || "1.0.0"})
                 </span>
               )}
             </div>
-            <h2 className="text-xl font-bold text-white tracking-tight">{submission.title}</h2>
-            <p className="text-xs text-slate-400">
-              Team: <strong className="text-slate-300">{submission.team?.name || "N/A"}</strong> • Event:{" "}
-              <strong className="text-slate-300">{submission.hackathon?.title || "Hackathon"}</strong>
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight">{submission.title}</h2>
+            <p className="text-xs text-slate-500">
+              Team: <strong className="text-slate-800">{submission.team?.name || "N/A"}</strong> • Event:{" "}
+              <strong className="text-slate-800">{submission.hackathon?.title || "Hackathon"}</strong>
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+            className="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -303,23 +303,23 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
 
         {/* Multi-Judge & Disagreement Banner */}
         {expertRefData && expertRefData.expertReferenceScore && expertRefData.expertReferenceScore.sampleCount > 0 && (
-          <div className="px-6 py-3 bg-slate-950/90 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+          <div className="px-6 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
             <div className="flex items-center gap-4">
-              <span className="text-slate-400 flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-brand-400" />
-                Judges Graded: <strong>{expertRefData.expertReferenceScore.sampleCount}</strong>
+              <span className="text-slate-600 flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-brand-600" />
+                Judges Graded: <strong className="text-slate-900">{expertRefData.expertReferenceScore.sampleCount}</strong>
               </span>
-              <span className="text-slate-400">
-                Expert Ref Mean: <strong className="text-emerald-400">{expertRefData.expertReferenceScore.meanTotal}</strong> pts
+              <span className="text-slate-600">
+                Expert Ref Mean: <strong className="text-emerald-700 font-semibold">{expertRefData.expertReferenceScore.meanTotal}</strong> pts
               </span>
-              <span className="text-slate-400">
-                Std Dev (σ): <strong>{expertRefData.expertReferenceScore.stdDev}</strong>
+              <span className="text-slate-600">
+                Std Dev (σ): <strong className="text-slate-900">{expertRefData.expertReferenceScore.stdDev}</strong>
               </span>
             </div>
 
             {expertRefData.disagreement?.hasDisagreement && (
-              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 font-bold">
-                <AlertTriangle className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 font-bold">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
                 <span>HIGH EVALUATOR DISAGREEMENT (σ &gt; 2.0)</span>
               </div>
             )}
@@ -327,14 +327,14 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
         )}
 
         {/* Score Comparison & Actions Banner */}
-        <div className="px-6 py-4 bg-slate-950/70 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
+        <div className="px-6 py-4 bg-slate-50/70 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-6">
             {originalAiTotal !== null && (
               <div>
-                <p className="text-4xs uppercase tracking-wider text-sky-400 font-semibold flex items-center gap-1">
-                  <Sparkles className="w-3 h-3" /> Baseline AI Total
+                <p className="text-xs uppercase tracking-wider text-sky-700 font-semibold flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5 text-sky-600" /> Baseline AI Total
                 </p>
-                <p className="text-xl font-bold text-sky-400 font-mono">
+                <p className="text-xl font-bold text-sky-800 font-mono">
                   {originalAiTotal} <span className="text-xs text-slate-500 font-sans font-normal">pts</span>
                 </p>
               </div>
@@ -342,21 +342,21 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
 
             {(isEditing || isIndependentScoring) && (
               <>
-                {originalAiTotal !== null && <span className="text-slate-600 text-lg font-bold">→</span>}
+                {originalAiTotal !== null && <span className="text-slate-400 text-lg font-bold">→</span>}
                 <div>
-                  <p className="text-4xs uppercase tracking-wider text-emerald-400 font-semibold flex items-center gap-1">
-                    <UserCheck className="w-3 h-3" /> Validated Judge Total
+                  <p className="text-xs uppercase tracking-wider text-emerald-700 font-semibold flex items-center gap-1">
+                    <UserCheck className="w-3.5 h-3.5 text-emerald-600" /> Validated Judge Total
                   </p>
-                  <p className="text-xl font-bold text-emerald-400 font-mono">
+                  <p className="text-xl font-bold text-emerald-800 font-mono">
                     {liveTotal} <span className="text-xs text-slate-500 font-sans font-normal">pts</span>
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-4xs uppercase tracking-wider text-brand-400 font-semibold flex items-center gap-1">
-                    <Scale className="w-3 h-3" /> Weighted Score
+                  <p className="text-xs uppercase tracking-wider text-brand-700 font-semibold flex items-center gap-1">
+                    <Scale className="w-3.5 h-3.5 text-brand-600" /> Weighted Score
                   </p>
-                  <p className="text-xl font-bold text-brand-300 font-mono">
+                  <p className="text-xl font-bold text-brand-800 font-mono">
                     {liveWeightedScore} <span className="text-xs text-slate-500 font-sans font-normal">pts</span>
                   </p>
                 </div>
@@ -365,8 +365,8 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                   <div
                     className={`px-3 py-1 rounded-full font-mono text-xs font-bold border ${
                       totalDelta > 0
-                        ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
-                        : "bg-rose-500/15 text-rose-300 border-rose-500/30"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : "bg-rose-50 text-rose-700 border border-rose-200"
                     }`}
                   >
                     Δ {totalDelta > 0 ? `+${totalDelta}` : totalDelta} pts
@@ -402,10 +402,10 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
         {/* Scrollable Content Workspace */}
         <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
           {/* Section 1: Complete Submission Information */}
-          <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3">
+          <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5 text-brand-400" />
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-brand-600" />
                 Project Submission Dossier
               </h3>
               <div className="flex items-center gap-3 text-xs">
@@ -414,7 +414,7 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                     href={submission.githubLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300"
+                    className="inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 font-medium"
                   >
                     <FileCode className="w-3.5 h-3.5" /> Repository <ExternalLink className="w-3 h-3" />
                   </a>
@@ -424,7 +424,7 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                     href={submission.demoLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300"
+                    className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium"
                   >
                     <Play className="w-3.5 h-3.5" /> Live Demo <ExternalLink className="w-3 h-3" />
                   </a>
@@ -434,7 +434,7 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                     href={submission.presentationLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300"
+                    className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700 font-medium"
                   >
                     <FileText className="w-3.5 h-3.5" /> Pitch Deck <ExternalLink className="w-3 h-3" />
                   </a>
@@ -442,22 +442,22 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
               </div>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap">
+            <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
               {submission.description}
             </p>
           </div>
 
           {/* Section 2: Similarity Alert & Decision Workflow */}
           {submission.similarityFlags && submission.similarityFlags.length > 0 && (
-            <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/30 space-y-4">
+            <div className="p-5 rounded-xl bg-amber-50 border border-amber-200 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-amber-400" />
-                  <h4 className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                  <ShieldAlert className="w-4 h-4 text-amber-600" />
+                  <h4 className="text-xs font-bold text-amber-800 uppercase tracking-wider">
                     Semantic Similarity Defense Alert
                   </h4>
                 </div>
-                <span className="text-3xs text-slate-400 italic">
+                <span className="text-xs text-amber-700 italic">
                   * Decision support only. AI never automatically rejects submissions.
                 </span>
               </div>
@@ -466,17 +466,17 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                 {submission.similarityFlags.map((flag, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs flex items-center justify-between"
+                    className="p-3 rounded-xl bg-white border border-amber-200 text-xs flex items-center justify-between shadow-sm"
                   >
                     <div>
-                      <p className="font-semibold text-white">
+                      <p className="font-semibold text-slate-900">
                         {flag.submission?.title || "Similar Project"}
                       </p>
-                      <p className="text-3xs text-slate-400 mt-0.5">
+                      <p className="text-xs text-slate-500 mt-0.5">
                         Team: {flag.submission?.team?.name || "Other Team"}
                       </p>
                     </div>
-                    <span className="font-mono font-bold text-amber-300 bg-amber-500/10 px-2 py-1 rounded border border-amber-500/30">
+                    <span className="font-mono font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded border border-amber-200">
                       {(flag.score * 100).toFixed(1)}% Cosine
                     </span>
                   </div>
@@ -484,16 +484,16 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
               </div>
 
               {/* Judge Similarity Decision Buttons */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-800">
-                <span className="text-xs text-slate-400 font-semibold">Judge Plagiarism Finding:</span>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-amber-200">
+                <span className="text-xs text-amber-800 font-semibold">Judge Plagiarism Finding:</span>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setSimilarityDecision("similar")}
                     className={`px-3 py-1 text-xs font-semibold rounded-lg border transition ${
                       similarityDecision === "similar"
-                        ? "bg-rose-500 text-white border-rose-400 shadow-sm"
-                        : "bg-slate-900 text-slate-400 border-slate-700 hover:text-white"
+                        ? "bg-rose-600 text-white border-rose-600 shadow-sm"
+                        : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
                     }`}
                   >
                     Mark Similar (Plagiarized)
@@ -503,8 +503,8 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                     onClick={() => setSimilarityDecision("not_similar")}
                     className={`px-3 py-1 text-xs font-semibold rounded-lg border transition ${
                       similarityDecision === "not_similar"
-                        ? "bg-emerald-600 text-white border-emerald-500 shadow-sm"
-                        : "bg-slate-900 text-slate-400 border-slate-700 hover:text-white"
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                        : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
                     }`}
                   >
                     Mark Distinct (Original)
@@ -514,8 +514,8 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                     onClick={() => setSimilarityDecision("needs_review")}
                     className={`px-3 py-1 text-xs font-semibold rounded-lg border transition ${
                       similarityDecision === "needs_review"
-                        ? "bg-amber-600 text-white border-amber-500 shadow-sm"
-                        : "bg-slate-900 text-slate-400 border-slate-700 hover:text-white"
+                        ? "bg-amber-600 text-white border-amber-600 shadow-sm"
+                        : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
                     }`}
                   >
                     Needs Further Review
@@ -528,11 +528,11 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
           {/* Section 3: Criteria-by-Criteria Scoring Breakdown */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-                <Sliders className="w-3.5 h-3.5 text-brand-400" />
+              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                <Sliders className="w-3.5 h-3.5 text-brand-600" />
                 Dynamic Rubric Dimensions & Rationales
               </h3>
-              <span className="text-3xs text-slate-400 font-mono">
+              <span className="text-xs text-slate-500 font-mono">
                 Organizer-configured weights (Fixed)
               </span>
             </div>
@@ -561,30 +561,30 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05, duration: 0.2 }}
-                    className="p-4 rounded-2xl bg-slate-800/40 border border-slate-700/60 space-y-3"
+                    className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono font-bold text-white capitalize">
+                          <span className="text-xs font-mono font-bold text-slate-900 capitalize">
                             {crit.criterion.replace(/([A-Z])/g, " $1")}
                           </span>
-                          <span className="text-3xs font-mono px-2 py-0.5 rounded bg-brand-500/10 text-brand-300 border border-brand-500/20">
+                          <span className="text-xs font-mono px-2 py-0.5 rounded bg-brand-50 text-brand-700 border border-brand-200 font-medium">
                             Weight: {rubricInfo.weight}× (Max {rubricInfo.maxScore})
                           </span>
                           {critDelta !== 0 && isEditing && (
                             <span
-                              className={`text-3xs font-mono px-1.5 py-0.5 rounded ${
+                              className={`text-xs font-mono px-1.5 py-0.5 rounded font-bold ${
                                 critDelta > 0
-                                  ? "bg-emerald-500/20 text-emerald-300 font-bold"
-                                  : "bg-rose-500/20 text-rose-300 font-bold"
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                  : "bg-rose-50 text-rose-700 border border-rose-200"
                               }`}
                             >
                               Δ {critDelta > 0 ? `+${critDelta}` : critDelta}
                             </span>
                           )}
                         </div>
-                        <p className="text-3xs text-slate-400 mt-0.5">{rubricInfo.description}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{rubricInfo.description}</p>
                       </div>
 
                       <div className="flex items-center gap-3">
@@ -597,7 +597,7 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                               step="0.5"
                               value={crit.score}
                               onChange={(e) => handleScoreChange(idx, e.target.value)}
-                              className="w-28 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-500"
+                              className="w-28 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-600"
                             />
                             <input
                               type="number"
@@ -606,11 +606,11 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                               step="0.5"
                               value={crit.score}
                               onChange={(e) => handleScoreChange(idx, e.target.value)}
-                              className="w-14 px-2 py-1 text-xs font-mono font-bold text-center bg-slate-900 border border-slate-700 rounded-lg text-white"
+                              className="w-14 px-2 py-1 text-xs font-mono font-bold text-center bg-white border border-slate-300 rounded-lg text-slate-900"
                             />
                           </div>
                         ) : (
-                          <span className="text-sm font-mono font-bold text-white bg-slate-900 px-3 py-1 rounded-lg border border-slate-700">
+                          <span className="text-sm font-mono font-bold text-slate-900 bg-white px-3 py-1 rounded-lg border border-slate-200">
                             {crit.score} / {rubricInfo.maxScore || 10}
                           </span>
                         )}
@@ -619,8 +619,8 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
 
                     {/* AI Rationale (Blue highlight) */}
                     {score?.source === "ai" && crit.rationale && (
-                      <div className="p-2.5 rounded-xl bg-sky-500/5 border border-sky-500/20 text-xs text-sky-200">
-                        <span className="text-4xs font-mono font-bold text-sky-400 block mb-0.5">
+                      <div className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-800">
+                        <span className="text-xs font-mono font-bold text-sky-700 block mb-0.5">
                           AI BASELINE RATIONALE
                         </span>
                         <p className="italic">"{crit.rationale}"</p>
@@ -630,7 +630,7 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                     {/* Judge Adjustment Justification */}
                     {isEditing ? (
                       <div>
-                        <label className="block text-4xs font-semibold text-slate-400 uppercase mb-1">
+                        <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">
                           Judge Technical Justification for Score Adjustment:
                         </label>
                         <textarea
@@ -638,12 +638,12 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                           value={crit.rationale}
                           onChange={(e) => handleRationaleChange(idx, e.target.value)}
                           placeholder="Provide specific justification grounded in repository code or architecture..."
-                          className="w-full px-3 py-2 text-xs bg-slate-900/90 border border-slate-700 rounded-lg text-slate-200 focus:border-brand-500 focus:outline-none resize-none leading-relaxed"
+                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg text-slate-900 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none resize-none leading-relaxed"
                         />
                       </div>
                     ) : (
                       score?.source === "human" && (
-                        <p className="text-xs text-slate-300 leading-relaxed italic bg-slate-900/40 p-3 rounded-xl border border-slate-800/80">
+                        <p className="text-xs text-slate-700 leading-relaxed italic bg-white p-3 rounded-xl border border-slate-200">
                           "{crit.rationale || "No specific rationale provided."}"
                         </p>
                       )
@@ -655,15 +655,15 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
           </div>
 
           {/* Section 4: Structured Human Expert Feedback */}
-          <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-4">
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-              <MessageSquare className="w-3.5 h-3.5 text-brand-400" />
+          <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-4">
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <MessageSquare className="w-3.5 h-3.5 text-brand-600" />
               Structured Expert Review & Qualitative Observations
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-3xs font-semibold text-emerald-400 uppercase mb-1">
+                <label className="block text-xs font-semibold text-emerald-700 uppercase mb-1">
                   Key Strengths (Comma separated)
                 </label>
                 <input
@@ -672,12 +672,12 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                   value={strengths}
                   onChange={(e) => setStrengths(e.target.value)}
                   placeholder="e.g. Robust error handling, Novel pipeline"
-                  className="w-full px-3 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:border-brand-500 focus:outline-none disabled:opacity-60"
+                  className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-brand-500 focus:outline-none disabled:bg-slate-100 disabled:opacity-70"
                 />
               </div>
 
               <div>
-                <label className="block text-3xs font-semibold text-rose-400 uppercase mb-1">
+                <label className="block text-xs font-semibold text-rose-700 uppercase mb-1">
                   Identified Weaknesses (Comma separated)
                 </label>
                 <input
@@ -686,12 +686,12 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                   value={weaknesses}
                   onChange={(e) => setWeaknesses(e.target.value)}
                   placeholder="e.g. Missing unit tests, High latency"
-                  className="w-full px-3 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:border-brand-500 focus:outline-none disabled:opacity-60"
+                  className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-brand-500 focus:outline-none disabled:bg-slate-100 disabled:opacity-70"
                 />
               </div>
 
               <div>
-                <label className="block text-3xs font-semibold text-sky-400 uppercase mb-1">
+                <label className="block text-xs font-semibold text-sky-700 uppercase mb-1">
                   Actionable Suggestions
                 </label>
                 <input
@@ -700,13 +700,13 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                   value={suggestions}
                   onChange={(e) => setSuggestions(e.target.value)}
                   placeholder="e.g. Add distributed cache, Dockerize"
-                  className="w-full px-3 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:border-brand-500 focus:outline-none disabled:opacity-60"
+                  className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-brand-500 focus:outline-none disabled:bg-slate-100 disabled:opacity-70"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">
                 Technical Observations (Architecture & Engineering Analysis)
               </label>
               <textarea
@@ -715,12 +715,12 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                 value={technicalObservations}
                 onChange={(e) => setTechnicalObservations(e.target.value)}
                 placeholder="Specific architectural remarks on repo layout, modularity, and algorithm complexity..."
-                className="w-full px-3 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:border-brand-500 focus:outline-none resize-none disabled:opacity-60"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-brand-500 focus:outline-none resize-none disabled:bg-slate-100 disabled:opacity-70"
               />
             </div>
 
             <div>
-              <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1">
+              <label className="block text-xs font-semibold text-slate-600 uppercase mb-1">
                 Overall Participant Feedback
               </label>
               <textarea
@@ -729,14 +729,14 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
                 value={overallComments}
                 onChange={(e) => setOverallComments(e.target.value)}
                 placeholder="Constructive summary feedback delivered to the participant team..."
-                className="w-full px-3 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-slate-200 focus:border-brand-500 focus:outline-none resize-none disabled:opacity-60"
+                className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-brand-500 focus:outline-none resize-none disabled:bg-slate-100 disabled:opacity-70"
               />
             </div>
           </div>
         </div>
 
         {/* Validation Action Bar */}
-        <div className="p-6 border-t border-slate-800 bg-slate-900/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-6 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           {score && (
             <Button
               variant="ghost"
@@ -744,7 +744,7 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
               onClick={handleReject}
               loading={loading}
               icon={XCircle}
-              className="text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 self-start sm:self-auto"
+              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 self-start sm:self-auto"
             >
               Reject Score
             </Button>
@@ -772,7 +772,7 @@ const JudgeScoreReviewModal = ({ isOpen, onClose, submission, score, onValidated
               </Button>
             ) : (
               <Button
-                variant="success"
+                variant="primary"
                 size="sm"
                 icon={CheckCircle2}
                 loading={loading}

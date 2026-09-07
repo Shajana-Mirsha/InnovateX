@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import PageHeader from "../../components/common/PageHeader";
 import DashboardStatCard from "../../components/dashboard/DashboardStatCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
@@ -35,9 +33,8 @@ import {
   MessageSquare
 } from "lucide-react";
 
-// API calls
 import { getAllHackathons } from "../../api/hackathonApi";
-import { getAllTeams } from "../../api/teamApi";
+import { getAllTeams, getMyTeams } from "../../api/teamApi";
 import { getAllRegistrations, getMyRegistrations } from "../../api/registrationApi";
 import { getAllSubmissions } from "../../api/submissionApi";
 import { getAllScores } from "../../api/scoreApi";
@@ -59,27 +56,26 @@ const Dashboard = () => {
       setLoading(true);
       setError("");
       try {
+        const currentUserId = (user?._id || user?.id)?.toString();
+
         if (user.role === "participant") {
           const [hackData, teamData, regData, subData] = await Promise.all([
             getAllHackathons(),
-            getAllTeams(),
+            getMyTeams(),
             getMyRegistrations(),
             getAllSubmissions(),
           ]);
 
           setHackathons(hackData.hackathons || []);
-
-          const userTeams = (teamData.teams || []).filter(
-            (t) =>
-              t.leader?._id === user.id ||
-              t.members?.some((m) => m._id === user.id)
-          );
+          const userTeams = teamData.teams || [];
           setTeams(userTeams);
           setRegistrations(regData.registrations || []);
 
-          const teamIds = userTeams.map((ut) => ut._id);
+          const teamIds = userTeams.map((ut) => (ut._id || ut)?.toString());
           const userSubs = (subData.submissions || []).filter(
-            (s) => s.submittedBy?._id === user.id || teamIds.includes(s.team?._id)
+            (s) =>
+              (s.submittedBy?._id || s.submittedBy)?.toString() === currentUserId ||
+              teamIds.includes((s.team?._id || s.team)?.toString())
           );
           setSubmissions(userSubs);
         } else if (user.role === "organizer" || user.role === "admin") {
@@ -105,7 +101,7 @@ const Dashboard = () => {
           setSubmissions(subData.submissions || []);
 
           const judgeScores = (scoreData.scores || []).filter(
-            (s) => (s.judge?._id || s.judge) === user.id
+            (s) => (s.judge?._id || s.judge)?.toString() === currentUserId
           );
           setScores(judgeScores);
         }
@@ -137,19 +133,19 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Adaptive Human-in-the-Loop Evaluation Portal</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             Welcome back, {user.name}
           </h1>
-          <p className="text-sm text-slate-400 mt-1 capitalize">
-            Signed in as <strong>{user.role}</strong> • Explore challenges, manage teams, track AI evaluations, and view results.
+          <p className="text-sm text-slate-500 mt-1 capitalize">
+            Signed in as <strong className="text-slate-800">{user.role}</strong> • Explore challenges, manage teams, track AI evaluations, and view results.
           </p>
         </div>
 
@@ -192,48 +188,48 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {user.role === "participant" && (
           <>
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Available Hackathons</p>
-                <p className="text-2xl font-bold text-white mt-1 font-mono">{hackathons.length}</p>
-                <p className="text-4xs text-brand-400 mt-0.5">{openHackathons.length} open for signups</p>
+                <p className="text-xs text-slate-500 font-medium">Available Hackathons</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{hackathons.length}</p>
+                <p className="text-2xs font-semibold text-blue-600 mt-0.5">{openHackathons.length} open for signups</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
                 <Calendar className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">My Teams</p>
-                <p className="text-2xl font-bold text-amber-300 mt-1 font-mono">{teams.length}</p>
-                <p className="text-4xs text-slate-400 mt-0.5">Joined or created</p>
+                <p className="text-xs text-slate-500 font-medium">My Teams</p>
+                <p className="text-2xl font-bold text-amber-600 mt-1">{teams.length}</p>
+                <p className="text-2xs text-slate-400 mt-0.5">Joined or created</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
                 <Users className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">My Registrations</p>
-                <p className="text-2xl font-bold text-emerald-300 mt-1 font-mono">{registrations.length}</p>
-                <p className="text-4xs text-emerald-400 mt-0.5">
+                <p className="text-xs text-slate-500 font-medium">My Registrations</p>
+                <p className="text-2xl font-bold text-emerald-600 mt-1">{registrations.length}</p>
+                <p className="text-2xs text-emerald-600 font-medium mt-0.5">
                   {registrations.filter((r) => r.status === "approved").length} approved
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
                 <ClipboardCheck className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">My Submissions</p>
-                <p className="text-2xl font-bold text-sky-300 mt-1 font-mono">{submissions.length}</p>
-                <p className="text-4xs text-sky-400 mt-0.5">Evaluated in competition</p>
+                <p className="text-xs text-slate-500 font-medium">My Submissions</p>
+                <p className="text-2xl font-bold text-sky-600 mt-1">{submissions.length}</p>
+                <p className="text-2xs text-sky-600 font-medium mt-0.5">Evaluated in competition</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+              <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sky-600">
                 <FileCode className="w-5 h-5" />
               </div>
             </div>
@@ -242,48 +238,48 @@ const Dashboard = () => {
 
         {(user.role === "organizer" || user.role === "admin") && (
           <>
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Hosted Hackathons</p>
-                <p className="text-2xl font-bold text-white mt-1 font-mono">{hackathons.length}</p>
-                <p className="text-4xs text-brand-400 mt-0.5">{openHackathons.length} registration open</p>
+                <p className="text-xs text-slate-500 font-medium">Hosted Hackathons</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{hackathons.length}</p>
+                <p className="text-2xs font-semibold text-blue-600 mt-0.5">{openHackathons.length} registration open</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
                 <Calendar className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Teams Formed</p>
-                <p className="text-2xl font-bold text-amber-300 mt-1 font-mono">{teams.length}</p>
-                <p className="text-4xs text-slate-400 mt-0.5">Registered teams</p>
+                <p className="text-xs text-slate-500 font-medium">Teams Formed</p>
+                <p className="text-2xl font-bold text-amber-600 mt-1">{teams.length}</p>
+                <p className="text-2xs text-slate-400 mt-0.5">Registered teams</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
                 <Users className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Pending Registrations</p>
-                <p className="text-2xl font-bold text-rose-300 mt-1 font-mono">
+                <p className="text-xs text-slate-500 font-medium">Pending Registrations</p>
+                <p className="text-2xl font-bold text-rose-600 mt-1">
                   {registrations.filter((r) => r.status === "pending").length}
                 </p>
-                <p className="text-4xs text-slate-400 mt-0.5">Awaiting review</p>
+                <p className="text-2xs text-rose-600 font-medium mt-0.5">Awaiting review</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+              <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
                 <ClipboardCheck className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Project Submissions</p>
-                <p className="text-2xl font-bold text-emerald-300 mt-1 font-mono">{submissions.length}</p>
-                <p className="text-4xs text-emerald-400 mt-0.5">Ready for AI evaluation</p>
+                <p className="text-xs text-slate-500 font-medium">Project Submissions</p>
+                <p className="text-2xl font-bold text-emerald-600 mt-1">{submissions.length}</p>
+                <p className="text-2xs text-emerald-600 font-medium mt-0.5">Ready for AI evaluation</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
                 <FileCode className="w-5 h-5" />
               </div>
             </div>
@@ -292,46 +288,46 @@ const Dashboard = () => {
 
         {user.role === "judge" && (
           <>
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Total Competitions</p>
-                <p className="text-2xl font-bold text-white mt-1 font-mono">{hackathons.length}</p>
+                <p className="text-xs text-slate-500 font-medium">Total Competitions</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{hackathons.length}</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
                 <Calendar className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Submissions to Grade</p>
-                <p className="text-2xl font-bold text-amber-300 mt-1 font-mono">{submissions.length}</p>
+                <p className="text-xs text-slate-500 font-medium">Submissions to Grade</p>
+                <p className="text-2xl font-bold text-amber-600 mt-1">{submissions.length}</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+              <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
                 <Gavel className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Scores Validated</p>
-                <p className="text-2xl font-bold text-emerald-300 font-mono">{scores.length}</p>
+                <p className="text-xs text-slate-500 font-medium">Scores Validated</p>
+                <p className="text-2xl font-bold text-emerald-600 mt-1">{scores.length}</p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
                 <Trophy className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 font-medium">Validation Rate</p>
-                <p className="text-2xl font-bold text-indigo-300 font-mono">
+                <p className="text-xs text-slate-500 font-medium">Validation Rate</p>
+                <p className="text-2xl font-bold text-indigo-600 mt-1">
                   {submissions.length > 0
                     ? `${Math.round((scores.length / submissions.length) * 100)}%`
                     : "0%"}
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
                 <Award className="w-5 h-5" />
               </div>
             </div>
@@ -341,17 +337,17 @@ const Dashboard = () => {
 
       {/* PARTICIPANT FOCUSED WORKSPACE SECTION */}
       {user.role === "participant" ? (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {/* Row 1: Active Challenges with Real Calculated Deadlines */}
-          <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-brand-400" />
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-blue-600" />
                 Active Innovation Challenges
               </h2>
               <Link
                 to="/hackathons"
-                className="text-xs font-semibold text-brand-400 hover:text-brand-300 inline-flex items-center gap-1"
+                className="text-xs font-semibold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 transition"
               >
                 Browse All <ArrowRight className="w-3.5 h-3.5" />
               </Link>
@@ -380,32 +376,32 @@ const Dashboard = () => {
                   return (
                     <div
                       key={hack._id}
-                      className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex flex-col justify-between space-y-4 hover:border-slate-700 transition"
+                      className="p-5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-4 hover:border-slate-300 hover:bg-white hover:shadow-sm transition"
                     >
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-3xs font-mono font-bold text-brand-400 uppercase">
+                          <span className="text-2xs font-semibold text-blue-600 uppercase tracking-wider">
                             {hack.domain || "Technology"}
                           </span>
                           {isClosed ? (
-                            <span className="text-4xs font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                            <span className="text-2xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700">
                               Submission Closed
                             </span>
                           ) : daysLeft !== null ? (
-                            <span className="text-4xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                            <span className="text-2xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                               {daysLeft} Day{daysLeft !== 1 ? "s" : ""} Remaining
                             </span>
                           ) : null}
                         </div>
 
-                        <h4 className="text-sm font-bold text-white line-clamp-1">{hack.title}</h4>
-                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{hack.title}</h4>
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                           {hack.description}
                         </p>
                       </div>
 
-                      <div className="pt-3 border-t border-slate-800/60 flex items-center justify-between text-3xs text-slate-400 font-mono">
-                        <span>Deadline: <strong className="text-slate-300">{formatDate(hack.endDate)}</strong></span>
+                      <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                        <span>Deadline: <strong className="text-slate-700">{formatDate(hack.endDate)}</strong></span>
                         <Link to={`/hackathons/${hack._id}`}>
                           <Button variant="outline" size="sm">
                             View Challenge
@@ -420,18 +416,18 @@ const Dashboard = () => {
           </div>
 
           {/* Row 2: My Teams & My Submissions Side-by-Side */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* My Teams */}
-            <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-4 flex flex-col justify-between">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-base font-bold text-white flex items-center gap-2">
-                    <Users className="w-4 h-4 text-amber-400" />
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <Users className="w-4 h-4 text-amber-600" />
                     My Teams
                   </h2>
                   <Link
                     to="/my-teams"
-                    className="text-xs font-semibold text-brand-400 hover:text-brand-300 inline-flex items-center gap-1"
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 transition"
                   >
                     View All <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
@@ -453,11 +449,11 @@ const Dashboard = () => {
                     {teams.slice(0, 3).map((tm) => (
                       <div
                         key={tm._id}
-                        className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between"
+                        className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between"
                       >
                         <div>
-                          <h4 className="text-xs font-bold text-white">{tm.name}</h4>
-                          <p className="text-3xs text-slate-400 font-mono mt-0.5">
+                          <h4 className="text-sm font-bold text-slate-900">{tm.name}</h4>
+                          <p className="text-xs text-slate-500 mt-0.5">
                             {tm.hackathon?.title || "Challenge Team"} • {tm.members?.length || 1} Members
                           </p>
                         </div>
@@ -473,7 +469,7 @@ const Dashboard = () => {
               </div>
 
               {teams.length > 0 && (
-                <div className="pt-4 border-t border-slate-800/80">
+                <div className="pt-4 border-t border-slate-100">
                   <Link to="/teams/create">
                     <Button variant="outline" size="sm" className="w-full" icon={PlusCircle}>
                       Create Another Team
@@ -484,16 +480,16 @@ const Dashboard = () => {
             </div>
 
             {/* My Submissions */}
-            <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-4 flex flex-col justify-between">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-base font-bold text-white flex items-center gap-2">
-                    <FileCode className="w-4 h-4 text-sky-400" />
+                  <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <FileCode className="w-4 h-4 text-sky-600" />
                     My Submissions & Evaluations
                   </h2>
                   <Link
                     to="/submissions"
-                    className="text-xs font-semibold text-brand-400 hover:text-brand-300 inline-flex items-center gap-1"
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 transition"
                   >
                     View All <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
@@ -515,11 +511,11 @@ const Dashboard = () => {
                     {submissions.slice(0, 3).map((sub) => (
                       <div
                         key={sub._id}
-                        className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-3"
+                        className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3"
                       >
-                        <div className="space-y-1">
-                          <h4 className="text-xs font-bold text-white line-clamp-1">{sub.title}</h4>
-                          <p className="text-3xs text-slate-400 font-mono">
+                        <div className="space-y-0.5">
+                          <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{sub.title}</h4>
+                          <p className="text-xs text-slate-500">
                             Event: {sub.hackathon?.title || "Hackathon"}
                           </p>
                         </div>
@@ -538,7 +534,7 @@ const Dashboard = () => {
               </div>
 
               {submissions.length > 0 && (
-                <div className="pt-4 border-t border-slate-800/80">
+                <div className="pt-4 border-t border-slate-100">
                   <Link to="/submissions/create">
                     <Button variant="primary" size="sm" className="w-full" icon={PlusCircle}>
                       Submit New Project
@@ -551,17 +547,17 @@ const Dashboard = () => {
         </div>
       ) : (
         /* Organizer / Judge / Admin View */
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-white flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-brand-400" />
+                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-blue-600" />
                   Featured Challenge Events
                 </h2>
                 <Link
                   to="/hackathons"
-                  className="text-xs font-semibold text-brand-400 hover:text-brand-300 inline-flex items-center gap-1"
+                  className="text-xs font-semibold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 transition"
                 >
                   Browse All <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
@@ -574,17 +570,17 @@ const Dashboard = () => {
                   message="Upcoming national challenges will appear here."
                 />
               ) : (
-                <div className="divide-y divide-slate-800/60">
+                <div className="divide-y divide-slate-100">
                   {hackathons.slice(0, 4).map((item) => (
                     <div
                       key={item._id}
                       className="py-4 first:pt-0 last:pb-0 flex items-center justify-between gap-4"
                     >
                       <div className="space-y-1">
-                        <h4 className="text-sm font-bold text-white">{item.title}</h4>
-                        <p className="text-xs text-slate-400 line-clamp-1">{item.description}</p>
-                        <div className="flex items-center gap-3 text-3xs text-slate-400 font-mono pt-1">
-                          <span className="capitalize px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                        <h4 className="text-sm font-bold text-slate-900">{item.title}</h4>
+                        <p className="text-xs text-slate-500 line-clamp-1">{item.description}</p>
+                        <div className="flex items-center gap-3 text-xs text-slate-500 pt-1">
+                          <span className="capitalize px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
                             {item.mode}
                           </span>
                           <span>Starts: {formatDate(item.startDate)}</span>
@@ -606,40 +602,40 @@ const Dashboard = () => {
           </div>
 
           <div className="space-y-6">
-            <div className="glass-panel rounded-3xl border border-slate-800 p-6 shadow-xl space-y-4">
-              <h3 className="text-base font-bold text-white">Platform Navigation</h3>
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+              <h3 className="text-base font-bold text-slate-900">Platform Navigation</h3>
               <div className="space-y-2">
                 <Link
                   to="/leaderboard"
-                  className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-850 hover:bg-slate-800 border border-slate-800 hover:border-brand-500 transition text-xs font-semibold text-slate-200"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 transition text-xs font-semibold text-slate-700 hover:text-blue-700"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Trophy className="w-4 h-4 text-amber-400" />
+                    <Trophy className="w-4 h-4 text-amber-500" />
                     <span>Live Leaderboard</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
                 </Link>
 
                 <Link
                   to="/manage/evaluation-intelligence"
-                  className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-850 hover:bg-slate-800 border border-slate-800 hover:border-brand-500 transition text-xs font-semibold text-slate-200"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 transition text-xs font-semibold text-slate-700 hover:text-blue-700"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Sparkles className="w-4 h-4 text-brand-400" />
+                    <Sparkles className="w-4 h-4 text-blue-600" />
                     <span>Evaluation Intelligence</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
                 </Link>
 
                 <Link
                   to="/manage/similarity"
-                  className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-850 hover:bg-slate-800 border border-slate-800 hover:border-brand-500 transition text-xs font-semibold text-slate-200"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50/50 border border-slate-200 hover:border-blue-300 transition text-xs font-semibold text-slate-700 hover:text-blue-700"
                 >
                   <div className="flex items-center gap-2.5">
-                    <ShieldAlert className="w-4 h-4 text-amber-400" />
+                    <ShieldAlert className="w-4 h-4 text-amber-500" />
                     <span>Similarity Review</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-500" />
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
                 </Link>
               </div>
             </div>

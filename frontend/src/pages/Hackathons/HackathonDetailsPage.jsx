@@ -5,7 +5,6 @@ import { getHackathonById, deleteHackathon } from "../../api/hackathonApi";
 import { getAllTeams } from "../../api/teamApi";
 import { registerTeam, getMyRegistrations } from "../../api/registrationApi";
 import { getHackathonResults } from "../../api/resultApi";
-import PageHeader from "../../components/common/PageHeader";
 import StatusBadge from "../../components/common/StatusBadge";
 import Button from "../../components/common/Button";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
@@ -161,11 +160,11 @@ const HackathonDetailsPage = () => {
   const hackathonCompleted = hackathon.status === "completed";
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       <div>
         <Link
           to="/hackathons"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Hackathons
@@ -173,18 +172,18 @@ const HackathonDetailsPage = () => {
       </div>
 
       {/* Header Banner */}
-      <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-6 justify-between items-start">
+      <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-start">
         <div className="space-y-3 flex-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="capitalize px-3 py-1 text-xs font-mono font-bold rounded-full bg-slate-800 text-brand-300 border border-slate-700">
+            <span className="capitalize px-3 py-1 text-2xs font-semibold rounded-full bg-slate-100 text-slate-700">
               {hackathon.mode}
             </span>
             <StatusBadge status={hackathon.status} />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">{hackathon.title}</h1>
-          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-            <Layers className="w-4 h-4 text-brand-400" />
-            <span>Domain: <strong className="text-slate-200">{hackathon.domain}</strong></span>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{hackathon.title}</h1>
+          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+            <Layers className="w-4 h-4 text-blue-600" />
+            <span>Domain: <strong className="text-slate-800">{hackathon.domain}</strong></span>
           </div>
         </div>
 
@@ -211,41 +210,41 @@ const HackathonDetailsPage = () => {
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Description, Rubric & Winners */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
-            <h2 className="text-base font-bold text-white border-b border-slate-800 pb-3">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4">
+            <h2 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">
               About the Hackathon Challenge
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
               {hackathon.description}
             </p>
           </div>
 
           {/* Rubric Criteria Breakdown */}
           {hackathon.criteria && hackathon.criteria.length > 0 && (
-            <div className="glass-panel rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-4">
-              <h2 className="text-base font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Sliders className="w-4.5 h-4.5 text-brand-400" />
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                <Sliders className="w-4.5 h-4.5 text-blue-600" />
                 Evaluation Rubric & Grading Dimensions
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {hackathon.criteria.map((c) => (
                   <div
                     key={c.name}
-                    className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-1.5"
+                    className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-white font-mono capitalize">
+                      <span className="text-xs font-bold text-slate-900 capitalize">
                         {c.name.replace(/([A-Z])/g, " $1")}
                       </span>
-                      <span className="text-3xs font-mono font-bold px-2 py-0.5 rounded bg-brand-500/10 text-brand-300 border border-brand-500/30">
+                      <span className="text-2xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
                         Weight: {(c.weight * 100).toFixed(0)}%
                       </span>
                     </div>
-                    <p className="text-3xs text-slate-400 leading-relaxed">{c.description}</p>
-                    <p className="text-4xs text-slate-500 font-mono">Max Score: {c.maxScore} pts</p>
+                    <p className="text-xs text-slate-500 leading-relaxed">{c.description}</p>
+                    <p className="text-2xs text-slate-400 font-medium">Max Score: {c.maxScore} pts</p>
                   </div>
                 ))}
               </div>
@@ -254,53 +253,53 @@ const HackathonDetailsPage = () => {
 
           {/* Declared Winners section */}
           {results.length > 0 && (
-            <div className="glass-panel rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-950/20 to-slate-900/60 p-6 sm:p-8 shadow-xl space-y-6">
-              <h2 className="text-base font-bold text-amber-300 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-amber-400" />
+            <div className="bg-white rounded-2xl border border-amber-200 p-6 sm:p-8 shadow-sm space-y-6">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-500" />
                 Official Challenge Winners
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {results.find((r) => r.position === 1) && (
-                  <div className="p-5 rounded-2xl bg-slate-900 border border-amber-500/40 text-center flex flex-col items-center">
+                  <div className="p-5 rounded-xl bg-amber-50/50 border border-amber-200 text-center flex flex-col items-center">
                     <span className="text-2xl">🥇</span>
-                    <h4 className="mt-2 text-3xs font-bold text-amber-400 uppercase tracking-wider">
+                    <h4 className="mt-2 text-2xs font-bold text-amber-700 uppercase tracking-wider">
                       First Place
                     </h4>
-                    <p className="mt-1 text-sm font-bold text-white line-clamp-1">
+                    <p className="mt-1 text-sm font-bold text-slate-900 line-clamp-1">
                       {results.find((r) => r.position === 1).submission?.title}
                     </p>
-                    <p className="text-3xs text-slate-400 mt-1 font-mono">
+                    <p className="text-xs text-slate-500 mt-1">
                       Team: {results.find((r) => r.position === 1).submission?.team?.name || "N/A"}
                     </p>
                   </div>
                 )}
 
                 {results.find((r) => r.position === 2) && (
-                  <div className="p-5 rounded-2xl bg-slate-900 border border-slate-700 text-center flex flex-col items-center">
+                  <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 text-center flex flex-col items-center">
                     <span className="text-2xl">🥈</span>
-                    <h4 className="mt-2 text-3xs font-bold text-slate-300 uppercase tracking-wider">
+                    <h4 className="mt-2 text-2xs font-bold text-slate-700 uppercase tracking-wider">
                       Second Place
                     </h4>
-                    <p className="mt-1 text-sm font-bold text-white line-clamp-1">
+                    <p className="mt-1 text-sm font-bold text-slate-900 line-clamp-1">
                       {results.find((r) => r.position === 2).submission?.title}
                     </p>
-                    <p className="text-3xs text-slate-400 mt-1 font-mono">
+                    <p className="text-xs text-slate-500 mt-1">
                       Team: {results.find((r) => r.position === 2).submission?.team?.name || "N/A"}
                     </p>
                   </div>
                 )}
 
                 {results.find((r) => r.position === 3) && (
-                  <div className="p-5 rounded-2xl bg-slate-900 border border-orange-800/60 text-center flex flex-col items-center">
+                  <div className="p-5 rounded-xl bg-amber-50/30 border border-amber-100 text-center flex flex-col items-center">
                     <span className="text-2xl">🥉</span>
-                    <h4 className="mt-2 text-3xs font-bold text-orange-400 uppercase tracking-wider">
+                    <h4 className="mt-2 text-2xs font-bold text-amber-600 uppercase tracking-wider">
                       Third Place
                     </h4>
-                    <p className="mt-1 text-sm font-bold text-white line-clamp-1">
+                    <p className="mt-1 text-sm font-bold text-slate-900 line-clamp-1">
                       {results.find((r) => r.position === 3).submission?.title}
                     </p>
-                    <p className="text-3xs text-slate-400 mt-1 font-mono">
+                    <p className="text-xs text-slate-500 mt-1">
                       Team: {results.find((r) => r.position === 3).submission?.team?.name || "N/A"}
                     </p>
                   </div>
@@ -312,37 +311,37 @@ const HackathonDetailsPage = () => {
 
         {/* Right Column: Timelines & Registration Form */}
         <div className="space-y-6">
-          <div className="glass-panel rounded-3xl border border-slate-800 p-6 shadow-xl space-y-4">
-            <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-2.5">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+            <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2.5">
               Event Logistics
             </h3>
 
             <div className="space-y-3.5">
               <div className="flex gap-3 text-xs">
-                <Calendar className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
+                <Calendar className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-slate-400">Timeline</p>
-                  <p className="mt-0.5 text-white font-mono">
+                  <p className="font-semibold text-slate-500">Timeline</p>
+                  <p className="mt-0.5 text-slate-800 font-medium">
                     {formatDate(hackathon.startDate)} – {formatDate(hackathon.endDate)}
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-3 text-xs">
-                <Clock className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <Clock className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-slate-400">Registration Deadline</p>
-                  <p className="mt-0.5 text-white font-mono">
+                  <p className="font-semibold text-slate-500">Registration Deadline</p>
+                  <p className="mt-0.5 text-slate-800 font-medium">
                     {formatDate(hackathon.registrationDeadline)}
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-3 text-xs">
-                <Users className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                <Users className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-slate-400">Team Size</p>
-                  <p className="mt-0.5 text-white font-mono">
+                  <p className="font-semibold text-slate-500">Team Size</p>
+                  <p className="mt-0.5 text-slate-800 font-medium">
                     Min: {hackathon.minTeamSize || 1} • Max: {hackathon.maxTeamSize} members
                   </p>
                 </div>
@@ -350,10 +349,10 @@ const HackathonDetailsPage = () => {
 
               {hackathon.mode !== "online" && (
                 <div className="flex gap-3 text-xs">
-                  <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-slate-400">Venue</p>
-                    <p className="mt-0.5 text-white">{hackathon.location || "Offline Location"}</p>
+                    <p className="font-semibold text-slate-500">Venue</p>
+                    <p className="mt-0.5 text-slate-800 font-medium">{hackathon.location || "Offline Location"}</p>
                   </div>
                 </div>
               )}
@@ -362,18 +361,18 @@ const HackathonDetailsPage = () => {
 
           {/* Registration Section for Participant */}
           {user && user.role === "participant" && !hackathonCompleted && (
-            <div className="glass-panel rounded-3xl border border-slate-800 p-6 shadow-xl space-y-4">
-              <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-2.5">
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2.5">
                 Register Your Team
               </h3>
 
               {alreadyRegistered ? (
                 <div className="space-y-3">
-                  <div className="p-4 bg-slate-950/60 border border-slate-800 rounded-2xl space-y-2">
-                    <p className="text-4xs text-slate-400 uppercase font-semibold">Registered Team</p>
-                    <p className="text-sm font-bold text-white">{myRegs[0].team?.name}</p>
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    <p className="text-2xs text-slate-400 uppercase font-semibold">Registered Team</p>
+                    <p className="text-sm font-bold text-slate-900">{myRegs[0].team?.name}</p>
                     <div className="mt-2 flex items-center justify-between">
-                      <span className="text-xs text-slate-400">Approval Status</span>
+                      <span className="text-xs text-slate-500">Approval Status</span>
                       <StatusBadge status={myRegs[0].status} />
                     </div>
                   </div>
@@ -387,13 +386,13 @@ const HackathonDetailsPage = () => {
                   )}
                 </div>
               ) : deadlinePassed ? (
-                <div className="flex gap-2 p-4 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-2xl text-xs">
+                <div className="flex gap-2 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs">
                   <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
                   <span>Registrations are closed for this challenge.</span>
                 </div>
               ) : myTeams.length === 0 ? (
                 <div className="space-y-4">
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                  <p className="text-xs text-slate-500 leading-relaxed">
                     You must lead a team created for this hackathon to register.
                   </p>
                   <Link to="/teams/create" className="block w-full">
@@ -405,11 +404,11 @@ const HackathonDetailsPage = () => {
               ) : (
                 <form onSubmit={handleRegisterTeam} className="space-y-4">
                   <div>
-                    <label className="block text-3xs font-semibold text-slate-400 uppercase mb-1.5">
+                    <label className="block text-2xs font-semibold text-slate-500 uppercase mb-1.5">
                       Select Leading Team
                     </label>
                     <select
-                      className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
+                      className="block w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-blue-500 focus:bg-white transition"
                       value={selectedTeamId}
                       onChange={(e) => setSelectedTeamId(e.target.value)}
                     >
@@ -421,8 +420,8 @@ const HackathonDetailsPage = () => {
                     </select>
                   </div>
 
-                  {regError && <p className="text-xs text-rose-400">{regError}</p>}
-                  {regSuccess && <p className="text-xs text-emerald-400">{regSuccess}</p>}
+                  {regError && <p className="text-xs text-rose-600">{regError}</p>}
+                  {regSuccess && <p className="text-xs text-emerald-600">{regSuccess}</p>}
 
                   <Button
                     type="submit"

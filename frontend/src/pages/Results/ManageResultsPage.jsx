@@ -178,14 +178,14 @@ const ManageResultsPage = () => {
       />
 
       {/* Select Hackathon Event */}
-      <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <span className="text-xs font-bold text-slate-300 shrink-0">Select Hackathon Event:</span>
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-sm">
+        <span className="text-sm font-bold text-slate-800 shrink-0">Select Hackathon Event:</span>
         <div className="w-full sm:w-80">
           {hackathons.length === 0 ? (
-            <p className="text-xs text-rose-400 font-semibold">No hackathons listed</p>
+            <p className="text-xs text-rose-600 font-semibold">No hackathons listed</p>
           ) : (
             <select
-              className="w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 focus:border-brand-500 focus:outline-none"
+              className="w-full text-sm font-medium text-slate-900 bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none shadow-sm"
               value={selectedHackathonId}
               onChange={(e) => setSelectedHackathonId(e.target.value)}
             >
@@ -201,9 +201,9 @@ const ManageResultsPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Form area */}
-        <div className="glass-panel border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl h-fit space-y-4">
-          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-            <Trophy className="w-4.5 h-4.5 text-brand-400" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm h-fit space-y-4">
+          <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-brand-600" />
             Declare Podium Placement
           </h3>
 
@@ -212,39 +212,39 @@ const ManageResultsPage = () => {
               <LoadingSpinner size="sm" />
             </div>
           ) : submissions.length === 0 ? (
-            <div className="flex gap-2 p-4 bg-amber-500/10 border border-amber-500/30 text-amber-300 rounded-2xl text-xs leading-relaxed">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <div className="flex gap-2 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs leading-relaxed">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
               <span>No submissions have been published for this event yet. Cannot declare results.</span>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {formError && (
-                <p className="p-3 bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 rounded-xl">
+                <p className="p-3 bg-rose-50 border border-rose-200 text-xs text-rose-700 font-medium rounded-xl">
                   {formError}
                 </p>
               )}
 
               <div>
-                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-2">
+                <label className="block text-xs font-semibold text-slate-700 uppercase mb-2">
                   Podium Position (1 = 1st Place) *
                 </label>
                 <input
                   type="number"
                   min={1}
                   required
-                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500 font-mono"
+                  className="block w-full text-sm font-medium text-slate-900 bg-white border border-slate-300 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 font-mono"
                   value={position}
                   onChange={(e) => setPosition(Number(e.target.value))}
                 />
               </div>
 
               <div>
-                <label className="block text-3xs font-semibold text-slate-400 uppercase mb-2">
+                <label className="block text-xs font-semibold text-slate-700 uppercase mb-2">
                   Winning Project Submission *
                 </label>
                 <select
                   required
-                  className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
+                  className="block w-full text-sm font-medium text-slate-900 bg-white border border-slate-300 rounded-xl p-3 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500"
                   value={submissionId}
                   onChange={(e) => setSubmissionId(e.target.value)}
                 >
@@ -269,9 +269,9 @@ const ManageResultsPage = () => {
         </div>
 
         {/* Existing winners list */}
-        <div className="lg:col-span-2 glass-panel border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
-          <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-            <Award className="w-4.5 h-4.5 text-brand-400" />
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
+          <h3 className="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+            <Award className="w-5 h-5 text-brand-600" />
             Declared Placements ({declaredResults.length})
           </h3>
 
@@ -280,30 +280,30 @@ const ManageResultsPage = () => {
               <LoadingSpinner size="md" />
             </div>
           ) : declaredResults.length === 0 ? (
-            <p className="text-xs text-slate-500 italic">No winners assigned for this hackathon yet.</p>
+            <p className="text-sm text-slate-500 italic">No winners assigned for this hackathon yet.</p>
           ) : (
-            <div className="divide-y divide-slate-800/60">
+            <div className="divide-y divide-slate-100">
               {declaredResults.map((res) => (
                 <div key={res._id} className="py-3.5 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
                   <div className="flex items-center gap-3">
-                    <span className="text-xl">
+                    <span className="text-2xl">
                       {res.position === 1 ? "🥇" : res.position === 2 ? "🥈" : res.position === 3 ? "🥉" : "🏆"}
                     </span>
                     <div>
-                      <p className="text-sm font-bold text-white">
+                      <p className="text-sm font-bold text-slate-900">
                         {res.submission?.title}
                       </p>
-                      <p className="text-3xs text-slate-400 font-mono mt-0.5">
+                      <p className="text-xs text-slate-500 font-mono mt-0.5">
                         Team: {res.submission?.team?.name} • Position #{res.position}
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => triggerDelete(res)}
-                    className="p-1.5 border border-rose-500/30 text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg transition"
+                    className="p-1.5 border border-rose-200 text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition shadow-sm"
                     title="Delete results placement"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}

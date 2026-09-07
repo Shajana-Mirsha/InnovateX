@@ -223,14 +223,14 @@ const ResearchMetricsPage = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-brand-600 uppercase tracking-wider mb-1">
             <Activity className="w-3.5 h-3.5" />
             <span>IEEE Empirical Evaluation Suite · Real Data Only</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             Research & Evaluation Analytics
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Real measurements from Anthropic Claude evaluations, human validation deltas, and held-out calibration splits.
           </p>
         </div>
@@ -240,7 +240,7 @@ const ResearchMetricsPage = () => {
           <select
             value={selectedHackathonId}
             onChange={(e) => setSelectedHackathonId(e.target.value)}
-            className="px-3.5 py-2 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white font-medium focus:border-brand-500 focus:outline-none"
+            className="px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 font-medium focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none shadow-sm"
           >
             {hackathons.map((h) => (
               <option key={h._id} value={h._id}>
@@ -272,13 +272,13 @@ const ResearchMetricsPage = () => {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+      <div className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-white border border-slate-200 shadow-sm">
         <button
           onClick={() => setActiveTab("overview")}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition ${
             activeTab === "overview"
-              ? "bg-brand-600 text-white shadow-md shadow-brand-600/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-brand-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
         >
           1. Research Overview & Effect
@@ -288,8 +288,8 @@ const ResearchMetricsPage = () => {
           onClick={() => setActiveTab("calibration")}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition ${
             activeTab === "calibration"
-              ? "bg-brand-600 text-white shadow-md shadow-brand-600/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-brand-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
         >
           2. Bias & Calibration Models
@@ -299,8 +299,8 @@ const ResearchMetricsPage = () => {
           onClick={() => setActiveTab("agreement")}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition ${
             activeTab === "agreement"
-              ? "bg-brand-600 text-white shadow-md shadow-brand-600/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-brand-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
         >
           3. Inter-Rater Agreement
@@ -310,8 +310,8 @@ const ResearchMetricsPage = () => {
           onClick={() => setActiveTab("similarity")}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition ${
             activeTab === "similarity"
-              ? "bg-brand-600 text-white shadow-md shadow-brand-600/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-brand-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
         >
           4. Similarity Detection
@@ -321,8 +321,8 @@ const ResearchMetricsPage = () => {
           onClick={() => setActiveTab("turnaround")}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition ${
             activeTab === "turnaround"
-              ? "bg-brand-600 text-white shadow-md shadow-brand-600/20"
-              : "text-slate-400 hover:text-white hover:bg-slate-800"
+              ? "bg-brand-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           }`}
         >
           5. Turnaround Efficiency
@@ -334,75 +334,75 @@ const ResearchMetricsPage = () => {
         <div className="space-y-6">
           {/* Summary KPIs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl glass-card border border-slate-800">
-              <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+              <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                 Paired Validations (N)
               </p>
-              <p className="text-2xl font-bold text-white font-mono mt-1">
+              <p className="text-2xl font-bold text-slate-900 font-mono mt-1">
                 {agreementData?.sampleSize || 0}
               </p>
-              <p className="text-4xs text-slate-500 mt-0.5">Real Human-AI score pairs</p>
+              <p className="text-xs text-slate-500 mt-0.5">Real Human-AI score pairs</p>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800">
-              <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+              <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                 Calibration Samples
               </p>
-              <p className="text-2xl font-bold text-brand-400 font-mono mt-1">
+              <p className="text-2xl font-bold text-brand-600 font-mono mt-1">
                 {calibrationData?.sampleCount || 0}
               </p>
-              <p className="text-4xs text-slate-500 mt-0.5">Non-zero correction pairs</p>
+              <p className="text-xs text-slate-500 mt-0.5">Non-zero correction pairs</p>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800">
-              <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+              <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                 Baseline MAE
               </p>
-              <p className="text-2xl font-bold text-amber-400 font-mono mt-1">
+              <p className="text-2xl font-bold text-amber-600 font-mono mt-1">
                 {agreementData?.overallMetrics?.meanAbsoluteError !== undefined
                   ? agreementData.overallMetrics.meanAbsoluteError
                   : "N/A"}
               </p>
-              <p className="text-4xs text-slate-500 mt-0.5">Mean error before calibration</p>
+              <p className="text-xs text-slate-500 mt-0.5">Mean error before calibration</p>
             </div>
 
-            <div className="p-5 rounded-2xl glass-card border border-slate-800">
-              <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+              <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                 Cohen's Kappa (κ)
               </p>
-              <p className="text-2xl font-bold text-emerald-400 font-mono mt-1">
+              <p className="text-2xl font-bold text-emerald-600 font-mono mt-1">
                 {agreementData?.overallMetrics?.cohenWeightedKappa !== undefined
                   ? agreementData.overallMetrics.cohenWeightedKappa
                   : "N/A"}
               </p>
-              <p className="text-4xs text-slate-500 mt-0.5">Inter-rater agreement</p>
+              <p className="text-xs text-slate-500 mt-0.5">Inter-rater agreement</p>
             </div>
           </div>
 
           {/* Held-Out Before vs After Comparison Card */}
-          <div className="glass-panel border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
               <div>
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Scale className="w-4.5 h-4.5 text-brand-400" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Scale className="w-5 h-5 text-brand-600" />
                   Held-Out Evaluation Split: Before vs. After Calibration
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   Regression model trained on chronological calibration set (70%) and evaluated strictly on unseen held-out test submissions (30%).
                 </p>
               </div>
-              <span className="px-2.5 py-1 text-3xs font-bold rounded-lg bg-brand-500/10 text-brand-300 border border-brand-500/20 font-mono self-start">
+              <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-50 text-brand-700 border border-brand-200 font-mono self-start">
                 Bias-based calibration
               </span>
             </div>
 
             {!heldOutData || heldOutData.status !== "ready" ? (
-              <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 text-center space-y-2">
-                <AlertCircle className="w-6 h-6 text-amber-400 mx-auto" />
-                <p className="text-xs font-bold text-slate-200">
+              <div className="p-6 rounded-xl bg-slate-50 border border-slate-200 text-center space-y-2">
+                <AlertCircle className="w-6 h-6 text-amber-500 mx-auto" />
+                <p className="text-xs font-bold text-slate-800">
                   {heldOutData?.message || "Not enough data for held-out evaluation."}
                 </p>
-                <p className="text-3xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Additional human-validated evaluations are required (minimum 4 samples across train and test partitions).
                 </p>
               </div>
@@ -411,22 +411,22 @@ const ResearchMetricsPage = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="bg-slate-950 text-4xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                      <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
                         <th className="px-5 py-3">Evaluation Metric</th>
                         <th className="px-5 py-3 font-mono">Before Calibration (Uncalibrated AI)</th>
                         <th className="px-5 py-3 font-mono">After Calibration (Adaptive AI)</th>
                         <th className="px-5 py-3 font-mono text-right">Empirical Change</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/60 font-mono">
+                    <tbody className="divide-y divide-slate-100 font-mono text-sm">
                       {beforeVsAfterTable.map((row) => (
-                        <tr key={row.metric} className="hover:bg-slate-800/20">
-                          <td className="px-5 py-3 font-sans font-medium text-white">{row.metric}</td>
-                          <td className="px-5 py-3 text-slate-300">{row.before}</td>
-                          <td className="px-5 py-3 text-brand-300 font-bold">{row.after}</td>
+                        <tr key={row.metric} className="hover:bg-slate-50/70">
+                          <td className="px-5 py-3 font-sans font-medium text-slate-900">{row.metric}</td>
+                          <td className="px-5 py-3 text-slate-600">{row.before}</td>
+                          <td className="px-5 py-3 text-brand-600 font-bold">{row.after}</td>
                           <td className="px-5 py-3 text-right">
-                            <span className={`px-2 py-0.5 rounded text-3xs font-bold ${
-                              row.isBetter ? "bg-emerald-500/20 text-emerald-300" : "bg-slate-800 text-slate-400"
+                            <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                              row.isBetter ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-100 text-slate-600"
                             }`}>
                               {row.change}
                             </span>
@@ -437,11 +437,11 @@ const ResearchMetricsPage = () => {
                   </table>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-900/60 border border-slate-800 text-3xs text-slate-400 flex items-center justify-between">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
                   <span>
-                    Partition Split: <strong>{heldOutData.split.calibrationSetCount}</strong> calibration samples / <strong>{heldOutData.split.heldOutTestSetCount}</strong> held-out test samples.
+                    Partition Split: <strong className="text-slate-800">{heldOutData.split.calibrationSetCount}</strong> calibration samples / <strong className="text-slate-800">{heldOutData.split.heldOutTestSetCount}</strong> held-out test samples.
                   </span>
-                  <span className="text-emerald-400 font-bold">
+                  <span className="text-emerald-600 font-semibold">
                     {heldOutData.improvement.isImproved ? "✓ Measured Error Reduction Achieved" : "No Overfitting Observed"}
                   </span>
                 </div>
@@ -452,9 +452,9 @@ const ResearchMetricsPage = () => {
           {/* Criterion Bias & Correction Distribution Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Criterion Bias Bar Chart */}
-            <div className="p-6 rounded-3xl glass-panel border border-slate-800 space-y-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-brand-400" />
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-brand-600" />
                 Criterion Bias (Mean Signed Error = Human Score - AI Score)
               </h3>
               {biasChartData.length === 0 ? (
@@ -463,18 +463,19 @@ const ResearchMetricsPage = () => {
                 <div className="h-64 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={biasChartData} margin={{ top: 10, right: 20, left: 10, bottom: 20 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                      <XAxis dataKey="criterion" stroke="#94a3b8" fontSize={11} />
-                      <YAxis stroke="#94a3b8" fontSize={11} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                      <XAxis dataKey="criterion" stroke="#64748b" fontSize={11} />
+                      <YAxis stroke="#64748b" fontSize={11} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: "#0f172a",
-                          borderColor: "#334155",
+                          backgroundColor: "#ffffff",
+                          borderColor: "#e2e8f0",
                           borderRadius: "12px",
-                          fontSize: "12px"
+                          fontSize: "12px",
+                          color: "#0f172a"
                         }}
                       />
-                      <Bar dataKey="meanSignedError" fill="#6366f1" name="Bias (MSE)" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="meanSignedError" fill="#3b82f6" name="Bias (MSE)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -482,9 +483,9 @@ const ResearchMetricsPage = () => {
             </div>
 
             {/* Correction Direction Breakdown */}
-            <div className="p-6 rounded-3xl glass-panel border border-slate-800 space-y-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <GitCommit className="w-4 h-4 text-brand-400" />
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <GitCommit className="w-5 h-5 text-brand-600" />
                 Judge Correction Direction Distribution
               </h3>
               {correctionDistributionData.length === 0 ? (
@@ -508,10 +509,11 @@ const ResearchMetricsPage = () => {
                       </Pie>
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: "#0f172a",
-                          borderColor: "#334155",
+                          backgroundColor: "#ffffff",
+                          borderColor: "#e2e8f0",
                           borderRadius: "12px",
-                          fontSize: "12px"
+                          fontSize: "12px",
+                          color: "#0f172a"
                         }}
                       />
                       <Legend verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: "11px" }} />
@@ -529,10 +531,10 @@ const ResearchMetricsPage = () => {
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight">
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
                 Human-Correction Calibration & Bias Modeling
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Measures signed judge deltas $(\text{humanScore} - \text{aiScore})$ and fits regression adaptation models.
               </p>
             </div>
@@ -557,14 +559,14 @@ const ResearchMetricsPage = () => {
           ) : (
             <div className="space-y-6">
               {/* Per-Criterion Regression Models Table */}
-              <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-                <div className="p-4 bg-slate-900 border-b border-slate-800 font-bold text-xs text-white">
+              <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                <div className="p-4 bg-slate-50 border-b border-slate-200 font-bold text-xs text-slate-800">
                   Linear Calibration Equations: human_score = m * ai_score + b
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="bg-slate-950 text-4xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                      <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
                         <th className="px-5 py-3.5">Criterion</th>
                         <th className="px-5 py-3.5">Sample Count</th>
                         <th className="px-5 py-3.5">Mean AI Score</th>
@@ -576,44 +578,44 @@ const ResearchMetricsPage = () => {
                         <th className="px-5 py-3.5 text-right">Fit MAE</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/60">
+                    <tbody className="divide-y divide-slate-100 text-sm">
                       {Object.entries(calibrationData.criterionBias || {}).map(([crit, stats]) => (
-                        <tr key={crit} className="hover:bg-slate-800/30">
-                          <td className="px-5 py-3.5 font-semibold text-white font-mono">
+                        <tr key={crit} className="hover:bg-slate-50/70">
+                          <td className="px-5 py-3.5 font-semibold text-slate-900 font-mono">
                             {crit}
                           </td>
-                          <td className="px-5 py-3.5 font-mono text-slate-300">
+                          <td className="px-5 py-3.5 font-mono text-slate-700">
                             {stats.sampleCount}
                           </td>
-                          <td className="px-5 py-3.5 font-mono text-slate-300">
+                          <td className="px-5 py-3.5 font-mono text-slate-700">
                             {stats.meanAiScore}
                           </td>
-                          <td className="px-5 py-3.5 font-mono text-slate-300">
+                          <td className="px-5 py-3.5 font-mono text-slate-700">
                             {stats.meanHumanScore}
                           </td>
                           <td className="px-5 py-3.5">
                             <span
-                              className={`px-2 py-0.5 text-3xs font-bold rounded-full ${
+                              className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
                                 stats.biasDirection === "AI_UNDERSCORING"
-                                  ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                                  ? "bg-amber-50 text-amber-700 border border-amber-200"
                                   : stats.biasDirection === "AI_OVERSCORING"
-                                  ? "bg-rose-500/15 text-rose-300 border border-rose-500/30"
-                                  : "bg-slate-800 text-slate-400"
+                                  ? "bg-rose-50 text-rose-700 border border-rose-200"
+                                  : "bg-slate-100 text-slate-700"
                               }`}
                             >
                               {stats.biasDirection}
                             </span>
                           </td>
-                          <td className="px-5 py-3.5 font-mono text-brand-300">
+                          <td className="px-5 py-3.5 font-mono text-brand-600 font-semibold">
                             {stats.regression.slope}
                           </td>
-                          <td className="px-5 py-3.5 font-mono text-brand-300">
+                          <td className="px-5 py-3.5 font-mono text-brand-600 font-semibold">
                             {stats.regression.intercept}
                           </td>
-                          <td className="px-5 py-3.5 font-mono font-bold text-emerald-400">
+                          <td className="px-5 py-3.5 font-mono font-bold text-emerald-600">
                             {stats.regression.r2}
                           </td>
-                          <td className="px-5 py-3.5 text-right font-mono text-slate-300">
+                          <td className="px-5 py-3.5 text-right font-mono text-slate-600">
                             {stats.regression.mae}
                           </td>
                         </tr>
@@ -631,10 +633,10 @@ const ResearchMetricsPage = () => {
       {activeTab === "agreement" && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
               Inter-Rater Agreement & Reliability Metrics
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Evaluates statistical concordance between baseline AI scores and expert human-validated scores.
             </p>
           </div>
@@ -649,70 +651,70 @@ const ResearchMetricsPage = () => {
             <div className="space-y-6">
               {/* Overall Metrics Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="p-4 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                     Spearman (ρ)
                   </p>
-                  <p className="text-2xl font-bold text-brand-400 font-mono mt-1">
+                  <p className="text-2xl font-bold text-brand-600 font-mono mt-1">
                     {agreementData.overallMetrics?.spearmanRho !== null
                       ? agreementData.overallMetrics.spearmanRho
                       : "N/A"}
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Rank Correlation</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Rank Correlation</p>
                 </div>
 
-                <div className="p-4 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                     Kendall (τ)
                   </p>
-                  <p className="text-2xl font-bold text-brand-400 font-mono mt-1">
+                  <p className="text-2xl font-bold text-brand-600 font-mono mt-1">
                     {agreementData.overallMetrics?.kendallTau !== null
                       ? agreementData.overallMetrics.kendallTau
                       : "N/A"}
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Concordance tau</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Concordance tau</p>
                 </div>
 
-                <div className="p-4 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                     Cohen's Kappa (κ)
                   </p>
-                  <p className="text-2xl font-bold text-emerald-400 font-mono mt-1">
+                  <p className="text-2xl font-bold text-emerald-600 font-mono mt-1">
                     {agreementData.overallMetrics?.cohenWeightedKappa}
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Quadratic Weighted</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Quadratic Weighted</p>
                 </div>
 
-                <div className="p-4 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                     Mean Abs Error (MAE)
                   </p>
-                  <p className="text-2xl font-bold text-sky-400 font-mono mt-1">
+                  <p className="text-2xl font-bold text-sky-600 font-mono mt-1">
                     {agreementData.overallMetrics?.meanAbsoluteError}
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Points deviation</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Points deviation</p>
                 </div>
 
-                <div className="p-4 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                     RMSE
                   </p>
-                  <p className="text-2xl font-bold text-indigo-400 font-mono mt-1">
+                  <p className="text-2xl font-bold text-indigo-600 font-mono mt-1">
                     {agreementData.overallMetrics?.rootMeanSquaredError}
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Root Mean Sq Error</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Root Mean Sq Error</p>
                 </div>
               </div>
 
               {/* Per Criterion Agreement Breakdown */}
-              <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-                <div className="p-4 bg-slate-900 border-b border-slate-800 font-bold text-xs text-white">
+              <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                <div className="p-4 bg-slate-50 border-b border-slate-200 font-bold text-xs text-slate-800">
                   Per-Criterion Statistical Agreement Breakdown
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="bg-slate-950 text-4xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                      <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
                         <th className="px-5 py-3.5">Criterion</th>
                         <th className="px-5 py-3.5">Sample Size</th>
                         <th className="px-5 py-3.5">Criterion MAE</th>
@@ -720,14 +722,14 @@ const ResearchMetricsPage = () => {
                         <th className="px-5 py-3.5 text-right">Weighted Kappa (κ)</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/60">
+                    <tbody className="divide-y divide-slate-100 text-sm">
                       {Object.entries(agreementData.criterionBreakdown || {}).map(([crit, stats]) => (
-                        <tr key={crit} className="hover:bg-slate-800/30">
-                          <td className="px-5 py-3.5 font-semibold text-white font-mono">{crit}</td>
-                          <td className="px-5 py-3.5 font-mono text-slate-300">{stats.sampleSize}</td>
-                          <td className="px-5 py-3.5 font-mono text-brand-300">{stats.mae}</td>
-                          <td className="px-5 py-3.5 font-mono text-sky-300">{stats.rmse}</td>
-                          <td className="px-5 py-3.5 text-right font-mono font-bold text-emerald-400">
+                        <tr key={crit} className="hover:bg-slate-50/70">
+                          <td className="px-5 py-3.5 font-semibold text-slate-900 font-mono">{crit}</td>
+                          <td className="px-5 py-3.5 font-mono text-slate-700">{stats.sampleSize}</td>
+                          <td className="px-5 py-3.5 font-mono text-brand-600">{stats.mae}</td>
+                          <td className="px-5 py-3.5 font-mono text-sky-600">{stats.rmse}</td>
+                          <td className="px-5 py-3.5 text-right font-mono font-bold text-emerald-600">
                             {stats.cohenWeightedKappa}
                           </td>
                         </tr>
@@ -745,10 +747,10 @@ const ResearchMetricsPage = () => {
       {activeTab === "similarity" && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
               Semantic Similarity Duplicate Detection Performance
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Evaluates Precision, Recall, and F1-score against human ground-truth duplicate annotations.
             </p>
           </div>
@@ -763,73 +765,73 @@ const ResearchMetricsPage = () => {
             <div className="space-y-6">
               {/* KPIs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">Precision</p>
-                  <p className="text-2xl font-bold text-emerald-400 font-mono mt-1">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Precision</p>
+                  <p className="text-2xl font-bold text-emerald-600 font-mono mt-1">
                     {(similarityData.metrics.precision * 100).toFixed(1)}%
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">TP / (TP + FP)</p>
+                  <p className="text-xs text-slate-500 mt-0.5">TP / (TP + FP)</p>
                 </div>
 
-                <div className="p-5 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">Recall</p>
-                  <p className="text-2xl font-bold text-brand-400 font-mono mt-1">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Recall</p>
+                  <p className="text-2xl font-bold text-brand-600 font-mono mt-1">
                     {(similarityData.metrics.recall * 100).toFixed(1)}%
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">TP / (TP + FN)</p>
+                  <p className="text-xs text-slate-500 mt-0.5">TP / (TP + FN)</p>
                 </div>
 
-                <div className="p-5 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">F1-Score</p>
-                  <p className="text-2xl font-bold text-sky-400 font-mono mt-1">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">F1-Score</p>
+                  <p className="text-2xl font-bold text-sky-600 font-mono mt-1">
                     {(similarityData.metrics.f1Score * 100).toFixed(1)}%
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Harmonic mean</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Harmonic mean</p>
                 </div>
 
-                <div className="p-5 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">Accuracy</p>
-                  <p className="text-2xl font-bold text-white font-mono mt-1">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Accuracy</p>
+                  <p className="text-2xl font-bold text-slate-900 font-mono mt-1">
                     {(similarityData.metrics.accuracy * 100).toFixed(1)}%
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Overall correctness</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Overall correctness</p>
                 </div>
               </div>
 
               {/* Confusion Matrix Table */}
-              <div className="p-6 rounded-3xl glass-panel border border-slate-800 space-y-4">
-                <h3 className="text-sm font-bold text-white">2x2 Confusion Matrix</h3>
+              <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+                <h3 className="text-base font-bold text-slate-900">2x2 Confusion Matrix</h3>
                 <div className="grid grid-cols-2 gap-3 text-center">
-                  <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30">
-                    <p className="text-3xs uppercase font-semibold text-emerald-400">True Positives (TP)</p>
-                    <p className="text-3xl font-extrabold text-emerald-300 font-mono mt-1">
+                  <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <p className="text-xs uppercase font-semibold text-emerald-700">True Positives (TP)</p>
+                    <p className="text-3xl font-extrabold text-emerald-800 font-mono mt-1">
                       {similarityData.confusionMatrix.truePositives}
                     </p>
-                    <p className="text-4xs text-slate-400 mt-1">Correctly Flagged Duplicates</p>
+                    <p className="text-xs text-slate-500 mt-1">Correctly Flagged Duplicates</p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30">
-                    <p className="text-3xs uppercase font-semibold text-rose-400">False Positives (FP)</p>
-                    <p className="text-3xl font-extrabold text-rose-300 font-mono mt-1">
+                  <div className="p-4 rounded-xl bg-rose-50 border border-rose-200">
+                    <p className="text-xs uppercase font-semibold text-rose-700">False Positives (FP)</p>
+                    <p className="text-3xl font-extrabold text-rose-800 font-mono mt-1">
                       {similarityData.confusionMatrix.falsePositives}
                     </p>
-                    <p className="text-4xs text-slate-400 mt-1">Spurious Overlap Warnings</p>
+                    <p className="text-xs text-slate-500 mt-1">Spurious Overlap Warnings</p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30">
-                    <p className="text-3xs uppercase font-semibold text-amber-400">False Negatives (FN)</p>
-                    <p className="text-3xl font-extrabold text-amber-300 font-mono mt-1">
+                  <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <p className="text-xs uppercase font-semibold text-amber-700">False Negatives (FN)</p>
+                    <p className="text-3xl font-extrabold text-amber-800 font-mono mt-1">
                       {similarityData.confusionMatrix.falseNegatives}
                     </p>
-                    <p className="text-4xs text-slate-400 mt-1">Missed Duplicates</p>
+                    <p className="text-xs text-slate-500 mt-1">Missed Duplicates</p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700">
-                    <p className="text-3xs uppercase font-semibold text-slate-300">True Negatives (TN)</p>
-                    <p className="text-3xl font-extrabold text-white font-mono mt-1">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <p className="text-xs uppercase font-semibold text-slate-700">True Negatives (TN)</p>
+                    <p className="text-3xl font-extrabold text-slate-900 font-mono mt-1">
                       {similarityData.confusionMatrix.trueNegatives}
                     </p>
-                    <p className="text-4xs text-slate-400 mt-1">Correctly Cleared Distinct</p>
+                    <p className="text-xs text-slate-500 mt-1">Correctly Cleared Distinct</p>
                   </div>
                 </div>
               </div>
@@ -842,10 +844,10 @@ const ResearchMetricsPage = () => {
       {activeTab === "turnaround" && (
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-bold text-white tracking-tight">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
               Evaluation Turnaround Time Savings
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Compares submission creation-to-scoring duration for AI-assisted workflows against manual baselines.
             </p>
           </div>
@@ -860,38 +862,38 @@ const ResearchMetricsPage = () => {
             <div className="space-y-6">
               {/* KPIs */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-5 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                     AI-Assisted Mean Turnaround
                   </p>
-                  <p className="text-2xl font-bold text-brand-400 font-mono mt-1">
-                    {timeSavedData.aiAssisted?.meanTurnaroundMinutes} <span className="text-xs text-slate-400">min</span>
+                  <p className="text-2xl font-bold text-brand-600 font-mono mt-1">
+                    {timeSavedData.aiAssisted?.meanTurnaroundMinutes} <span className="text-xs text-slate-500">min</span>
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">({timeSavedData.aiAssisted?.meanTurnaroundHours} hrs)</p>
+                  <p className="text-xs text-slate-500 mt-0.5">({timeSavedData.aiAssisted?.meanTurnaroundHours} hrs)</p>
                 </div>
 
-                <div className="p-5 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                     Manual Baseline Turnaround
                   </p>
-                  <p className="text-2xl font-bold text-slate-300 font-mono mt-1">
+                  <p className="text-2xl font-bold text-slate-800 font-mono mt-1">
                     {timeSavedData.legacyManualBaseline?.meanTurnaroundMinutes !== null
                       ? `${timeSavedData.legacyManualBaseline.meanTurnaroundMinutes} min`
                       : "No legacy data"}
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Fully manual judging</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Fully manual judging</p>
                 </div>
 
-                <div className="p-5 rounded-2xl glass-card border border-slate-800">
-                  <p className="text-4xs uppercase tracking-wider text-slate-400 font-semibold">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                  <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold">
                     Time Reduction (%)
                   </p>
-                  <p className="text-2xl font-bold text-emerald-400 font-mono mt-1">
+                  <p className="text-2xl font-bold text-emerald-600 font-mono mt-1">
                     {timeSavedData.timeSavedPercentage !== null
                       ? `${timeSavedData.timeSavedPercentage}%`
                       : "N/A"}
                   </p>
-                  <p className="text-4xs text-slate-500 mt-0.5">Turnaround acceleration</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Turnaround acceleration</p>
                 </div>
               </div>
             </div>

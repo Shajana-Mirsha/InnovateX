@@ -116,51 +116,51 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="w-full max-w-3xl glass-panel bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden my-8"
+        className="w-full max-w-3xl bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden my-8"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-800 bg-slate-900/90">
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/30 text-brand-400">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-50 border border-brand-200 text-brand-600">
               <Sliders className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Evaluation Rubric & Criteria</h2>
-              <p className="text-xs text-slate-400">{hackathon.title}</p>
+              <h2 className="text-lg font-bold text-slate-900">Evaluation Rubric & Criteria</h2>
+              <p className="text-xs text-slate-500">{hackathon.title}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+            className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Total Weight Status Bar */}
-        <div className="px-6 py-3 bg-slate-950/60 border-b border-slate-800 flex items-center justify-between text-xs">
+        <div className="px-6 py-3 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="text-slate-400 font-medium">Rubric Weight Balance:</span>
+            <span className="text-slate-600 font-medium">Rubric Weight Balance:</span>
             <span
               className={`font-mono font-bold px-2 py-0.5 rounded-full ${
                 totalWeight === 100
-                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                  : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : "bg-amber-50 text-amber-700 border border-amber-200"
               }`}
             >
               {totalWeight}%
             </span>
             {totalWeight === 100 ? (
-              <span className="flex items-center gap-1 text-emerald-400">
+              <span className="flex items-center gap-1 text-emerald-600 font-medium">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Optimal 100% distribution
               </span>
             ) : (
-              <span className="flex items-center gap-1 text-amber-400">
+              <span className="flex items-center gap-1 text-amber-600 font-medium">
                 <AlertCircle className="w-3.5 h-3.5" /> Sums to {totalWeight}%, recommend 100%
               </span>
             )}
@@ -168,7 +168,7 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
           <button
             type="button"
             onClick={handleNormalizeWeights}
-            className="text-brand-400 hover:text-brand-300 underline font-medium"
+            className="text-brand-600 hover:text-brand-700 font-semibold"
           >
             Auto-Balance Evenly
           </button>
@@ -183,11 +183,11 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 space-y-3"
+                className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Criterion Identifier
                     </label>
                     <input
@@ -195,13 +195,13 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
                       value={item.name}
                       onChange={(e) => handleChange(idx, "name", e.target.value)}
                       placeholder="e.g. algorithmicInnovation"
-                      className="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white font-mono focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 font-mono focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
                       required
                     />
                   </div>
 
                   <div className="w-28">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Max Score
                     </label>
                     <input
@@ -210,13 +210,13 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
                       max="100"
                       value={item.maxScore}
                       onChange={(e) => handleChange(idx, "maxScore", parseFloat(e.target.value) || 10)}
-                      className="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 font-mono text-center focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
                       required
                     />
                   </div>
 
                   <div className="w-32">
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Weight: {(item.weight * 100).toFixed(0)}%
                     </label>
                     <input
@@ -226,7 +226,7 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
                       max="1.0"
                       value={item.weight}
                       onChange={(e) => handleChange(idx, "weight", parseFloat(e.target.value) || 0.1)}
-                      className="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white font-mono text-center focus:border-brand-500 focus:outline-none"
+                      className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 font-mono text-center focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none"
                       required
                     />
                   </div>
@@ -234,7 +234,7 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
                   <button
                     type="button"
                     onClick={() => handleRemoveCriterion(idx)}
-                    className="p-2 mt-5 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 rounded-lg transition"
+                    className="p-2 mt-5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
                     title="Delete criterion"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -242,7 +242,7 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-400 mb-1">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">
                     Evaluation Guidance & Rubric Standards (Given to AI and Human Judges)
                   </label>
                   <textarea
@@ -250,7 +250,7 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
                     value={item.description}
                     onChange={(e) => handleChange(idx, "description", e.target.value)}
                     placeholder="Describe what high-scoring submissions must demonstrate for this criterion..."
-                    className="w-full px-3 py-2 text-xs bg-slate-900/90 border border-slate-700/80 rounded-lg text-slate-200 focus:border-brand-500 focus:outline-none resize-none leading-relaxed"
+                    className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg text-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none resize-none leading-relaxed"
                   />
                 </div>
               </motion.div>
@@ -263,14 +263,14 @@ const HackathonCriteriaModal = ({ isOpen, onClose, hackathon, onUpdated }) => {
             size="sm"
             onClick={handleAddCriterion}
             icon={Plus}
-            className="w-full border-dashed border-slate-700 hover:border-brand-500 text-slate-300"
+            className="w-full border-dashed border-slate-300 hover:border-brand-500 text-slate-600 bg-white"
           >
             Add Evaluation Criterion
           </Button>
 
           {/* Action Footer */}
-          <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-            <span className="text-4xs text-slate-500">
+          <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+            <span className="text-xs text-slate-500">
               * AI and Human judges score strictly against these calibrated rubrics.
             </span>
             <div className="flex items-center gap-3">

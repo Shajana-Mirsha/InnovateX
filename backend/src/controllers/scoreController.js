@@ -410,6 +410,15 @@ const validateScore = async (req, res) => {
           }
         }
         score.criterionScores = criterionScores;
+
+        // Synchronize legacy top-level score fields if criterion names match
+        criterionScores.forEach((item) => {
+          if (["innovation", "technicalImplementation", "impact", "presentation"].includes(item.criterion)) {
+            score[item.criterion] = item.score;
+            if (!score.criterionRationale) score.criterionRationale = {};
+            score.criterionRationale[item.criterion] = item.rationale || "";
+          }
+        });
       }
 
       if (feedback !== undefined) score.feedback = feedback;
@@ -731,7 +740,6 @@ const updateScore = async (req, res) => {
     }
 
     if (
-      req.user.role !== "admin" &&
       score.judge &&
       score.judge.toString() !== req.user._id.toString()
     ) {

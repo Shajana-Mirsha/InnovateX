@@ -128,6 +128,16 @@ const detectHackathonSimilarityEndpoint = async (req, res) => {
       });
     }
 
+    if (
+      req.user.role === "organizer" &&
+      hackathon.createdBy.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to trigger similarity detection for this hackathon"
+      });
+    }
+
     const threshold =
       req.body?.threshold !== undefined
         ? Number(req.body.threshold)

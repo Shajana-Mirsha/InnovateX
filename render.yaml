@@ -1,0 +1,48 @@
+services:
+  # InnovateX Express & WebSocket Backend
+  - type: web
+    name: innovatex-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: VOYAGE_API_KEY
+        sync: false
+
+  # InnovateX React + Vite Frontend (Static Site)
+  - type: web
+    name: innovatex-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: innovatex-backend
+          envVarKey: RENDER_EXTERNAL_URL
+          property: /api
+      - key: VITE_SOCKET_URL
+        fromService:
+          type: web
+          name: innovatex-backend
+          envVarKey: RENDER_EXTERNAL_URL

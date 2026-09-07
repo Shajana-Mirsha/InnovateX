@@ -108,14 +108,14 @@ const LeaderboardPage = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
             <Trophy className="w-3.5 h-3.5" />
             <span>Research Module 6 · Real-Time Weighted Ranking</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             Live Hackathon Standings
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Dynamic weighted evaluation reflecting customized criteria weights and live human-validation priority.
           </p>
         </div>
@@ -125,7 +125,7 @@ const LeaderboardPage = () => {
           <select
             value={selectedHackathonId}
             onChange={(e) => setSelectedHackathonId(e.target.value)}
-            className="px-3.5 py-2 text-sm bg-slate-900 border border-slate-700 rounded-xl text-white font-medium focus:border-brand-500 focus:outline-none"
+            className="px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-lg text-slate-800 font-medium shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
           >
             {hackathons.map((h) => (
               <option key={h._id} value={h._id}>
@@ -165,16 +165,16 @@ const LeaderboardPage = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="order-2 sm:order-1 p-6 glass-panel border border-slate-800 rounded-3xl text-center flex flex-col items-center justify-center relative overflow-hidden"
+              className="order-2 sm:order-1 p-6 bg-white border border-slate-200 rounded-2xl text-center flex flex-col items-center justify-center relative shadow-sm"
             >
-              <div className="w-10 h-10 rounded-2xl bg-slate-800 border border-slate-700 text-slate-200 flex items-center justify-center font-bold text-sm mb-3">
+              <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-bold text-sm mb-3">
                 🥈 2
               </div>
-              <h4 className="text-sm font-bold text-white line-clamp-1">{leaderboard[1].projectTitle}</h4>
-              <p className="text-3xs text-slate-400 mt-1 uppercase font-mono">Team: {getTeamName(leaderboard[1].team)}</p>
+              <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{leaderboard[1].projectTitle}</h4>
+              <p className="text-xs text-slate-500 mt-1 uppercase font-mono">Team: {getTeamName(leaderboard[1].team)}</p>
               <div className="mt-3 flex items-baseline gap-1 font-mono">
-                <span className="text-lg font-extrabold text-brand-400">{leaderboard[1].weightedScore}</span>
-                <span className="text-4xs text-slate-500">weighted pts</span>
+                <span className="text-lg font-extrabold text-blue-600">{leaderboard[1].weightedScore}</span>
+                <span className="text-xs text-slate-400">weighted pts</span>
               </div>
             </motion.div>
           )}
@@ -184,16 +184,16 @@ const LeaderboardPage = () => {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="order-1 sm:order-2 p-8 glass-panel border border-amber-500/40 bg-slate-900/90 rounded-3xl text-center flex flex-col items-center justify-center relative overflow-hidden shadow-xl shadow-amber-500/5 ring-1 ring-amber-500/20"
+              className="order-1 sm:order-2 p-8 bg-amber-50/70 border border-amber-300/80 rounded-2xl text-center flex flex-col items-center justify-center relative shadow-md ring-1 ring-amber-400/20"
             >
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/50 text-amber-300 flex items-center justify-center font-bold text-base mb-3 animate-pulse-subtle">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 border border-amber-300 text-amber-800 flex items-center justify-center font-bold text-base mb-3 shadow-inner">
                 🥇 1
               </div>
-              <h4 className="text-base font-bold text-white line-clamp-1">{leaderboard[0].projectTitle}</h4>
-              <p className="text-3xs text-amber-300 mt-1 uppercase font-mono">Team: {getTeamName(leaderboard[0].team)}</p>
+              <h4 className="text-base font-bold text-slate-900 line-clamp-1">{leaderboard[0].projectTitle}</h4>
+              <p className="text-xs text-amber-800 mt-1 uppercase font-mono font-medium">Team: {getTeamName(leaderboard[0].team)}</p>
               <div className="mt-3 flex items-baseline gap-1 font-mono">
-                <span className="text-2xl font-extrabold text-amber-400">{leaderboard[0].weightedScore}</span>
-                <span className="text-4xs text-slate-500">weighted pts</span>
+                <span className="text-2xl font-extrabold text-amber-700">{leaderboard[0].weightedScore}</span>
+                <span className="text-xs text-slate-500">weighted pts</span>
               </div>
             </motion.div>
           )}
@@ -204,16 +204,16 @@ const LeaderboardPage = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="order-3 p-6 glass-panel border border-slate-800 rounded-3xl text-center flex flex-col items-center justify-center relative overflow-hidden"
+              className="order-3 p-6 bg-white border border-slate-200 rounded-2xl text-center flex flex-col items-center justify-center relative shadow-sm"
             >
-              <div className="w-10 h-10 rounded-2xl bg-orange-950/40 border border-orange-700/50 text-orange-400 flex items-center justify-center font-bold text-sm mb-3">
+              <div className="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200 text-orange-700 flex items-center justify-center font-bold text-sm mb-3">
                 🥉 3
               </div>
-              <h4 className="text-sm font-bold text-white line-clamp-1">{leaderboard[2].projectTitle}</h4>
-              <p className="text-3xs text-slate-400 mt-1 uppercase font-mono">Team: {getTeamName(leaderboard[2].team)}</p>
+              <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{leaderboard[2].projectTitle}</h4>
+              <p className="text-xs text-slate-500 mt-1 uppercase font-mono">Team: {getTeamName(leaderboard[2].team)}</p>
               <div className="mt-3 flex items-baseline gap-1 font-mono">
-                <span className="text-lg font-extrabold text-brand-400">{leaderboard[2].weightedScore}</span>
-                <span className="text-4xs text-slate-500">weighted pts</span>
+                <span className="text-lg font-extrabold text-blue-600">{leaderboard[2].weightedScore}</span>
+                <span className="text-xs text-slate-400">weighted pts</span>
               </div>
             </motion.div>
           )}
@@ -230,20 +230,20 @@ const LeaderboardPage = () => {
           message="There are no evaluated submissions recorded for this competition yet."
         />
       ) : (
-        <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-900/90 text-4xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
-                  <th className="px-6 py-4">Rank</th>
-                  <th className="px-6 py-4">Project Title</th>
-                  <th className="px-6 py-4">Team</th>
-                  <th className="px-6 py-4">Score Type</th>
-                  <th className="px-6 py-4">Similarity Flags</th>
-                  <th className="px-6 py-4 text-right">Weighted Score</th>
+                <tr className="bg-slate-50 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b border-slate-200">
+                  <th className="px-6 py-3.5">Rank</th>
+                  <th className="px-6 py-3.5">Project Title</th>
+                  <th className="px-6 py-3.5">Team</th>
+                  <th className="px-6 py-3.5">Score Type</th>
+                  <th className="px-6 py-3.5">Similarity Flags</th>
+                  <th className="px-6 py-3.5 text-right">Weighted Score</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-slate-100">
                 <AnimatePresence>
                   {leaderboard.map((entry) => (
                     <motion.tr
@@ -253,30 +253,30 @@ const LeaderboardPage = () => {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                      className={`hover:bg-slate-800/30 transition ${
+                      className={`hover:bg-slate-50/80 transition-colors ${
                         entry.rank === 1
-                          ? "bg-amber-500/5"
+                          ? "bg-amber-50/30"
                           : entry.rank <= 3
-                          ? "bg-slate-800/20"
+                          ? "bg-slate-50/40"
                           : ""
                       }`}
                     >
                       {/* Rank */}
                       <td className="px-6 py-4">
-                        <span className="font-mono font-bold text-sm text-white">
+                        <span className="font-mono font-bold text-sm text-slate-900">
                           #{entry.rank}
                         </span>
                       </td>
 
                       {/* Title */}
                       <td className="px-6 py-4">
-                        <span className="text-sm font-bold text-white block">
+                        <span className="text-sm font-semibold text-slate-900 block">
                           {entry.projectTitle}
                         </span>
                       </td>
 
                       {/* Team */}
-                      <td className="px-6 py-4 text-xs font-medium text-slate-300">
+                      <td className="px-6 py-4 text-xs font-medium text-slate-600">
                         {getTeamName(entry.team)}
                       </td>
 
@@ -290,22 +290,22 @@ const LeaderboardPage = () => {
                       {/* Similarity Flags */}
                       <td className="px-6 py-4">
                         {entry.similarityFlags && entry.similarityFlags.length > 0 ? (
-                          <span className="inline-flex items-center gap-1 text-3xs font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                             <AlertTriangle className="w-3 h-3" />
                             {entry.similarityFlags.length} Overlap(s)
                           </span>
                         ) : (
-                          <span className="text-3xs text-slate-600 font-mono">None</span>
+                          <span className="text-xs text-slate-400 font-mono">None</span>
                         )}
                       </td>
 
                       {/* Weighted Score */}
                       <td className="px-6 py-4 text-right">
                         <div className="flex flex-col items-end">
-                          <span className="text-base font-bold font-mono text-brand-300">
+                          <span className="text-base font-bold font-mono text-blue-600">
                             {entry.weightedScore}
                           </span>
-                          <span className="text-4xs text-slate-500 font-mono">
+                          <span className="text-xs text-slate-400 font-mono">
                             Raw: {entry.averageScore} pts
                           </span>
                         </div>

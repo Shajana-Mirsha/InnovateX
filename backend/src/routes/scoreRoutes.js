@@ -19,7 +19,7 @@ const authorize = require("../middleware/roleMiddleware");
 router.post(
   "/",
   protect,
-  authorize("judge", "admin"),
+  authorize("judge"),
   createScore
 );
 
@@ -35,7 +35,7 @@ router.post(
 router.post(
   "/:id/validate",
   protect,
-  authorize("admin", "judge"),
+  authorize("judge"),
   validateScore
 );
 
@@ -75,7 +75,7 @@ router.get(
 router.put(
   "/:id",
   protect,
-  authorize("admin", "judge"),
+  authorize("judge"),
   updateScore
 );
 

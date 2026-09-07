@@ -114,14 +114,14 @@ const JudgeSubmissionsPage = () => {
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-brand-600 uppercase tracking-wider mb-1">
             <Gavel className="w-3.5 h-3.5" />
             <span>Judge Workspace · Human-in-the-Loop Evaluation</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             Submissions to Judge
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Review real submission dossiers, inspect AI baseline rationales, grade rubric criteria, and record expert validations.
           </p>
         </div>
@@ -147,19 +147,19 @@ const JudgeSubmissionsPage = () => {
           message="There are no project submissions available for evaluation yet."
         />
       ) : (
-        <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-900/90 text-4xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
-                  <th className="px-6 py-4">Project Title & Repository</th>
-                  <th className="px-6 py-4">Hackathon Event</th>
-                  <th className="px-6 py-4">Team</th>
-                  <th className="px-6 py-4">Evaluation Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                  <th className="px-6 py-3.5">Project Title & Repository</th>
+                  <th className="px-6 py-3.5">Hackathon Event</th>
+                  <th className="px-6 py-3.5">Team</th>
+                  <th className="px-6 py-3.5">Evaluation Status</th>
+                  <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-slate-100 text-sm">
                 {submissions.map((sub) => {
                   const score = scoresBySubId.get(sub._id.toString());
                   const allSubScores = allScoresBySubId.get(sub._id.toString()) || [];
@@ -169,24 +169,24 @@ const JudgeSubmissionsPage = () => {
                   const hasSimilarityAlert = sub.similarityFlags && sub.similarityFlags.length > 0;
 
                   return (
-                    <tr key={sub._id} className="hover:bg-slate-800/30 transition">
+                    <tr key={sub._id} className="hover:bg-slate-50/70 transition">
                       <td className="px-6 py-4">
                         <div className="space-y-1">
-                          <span className="text-sm font-bold text-white block">
+                          <span className="text-sm font-bold text-slate-900 block">
                             {sub.title}
                           </span>
-                          <p className="text-xs text-slate-400 line-clamp-1">
+                          <p className="text-xs text-slate-600 line-clamp-1">
                             {sub.description}
                           </p>
-                          <div className="flex items-center gap-3 text-3xs text-slate-400 pt-0.5">
+                          <div className="flex items-center gap-3 text-xs text-slate-500 pt-0.5">
                             {sub.githubLink && (
                               <a
                                 href={sub.githubLink}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-sky-400 hover:text-sky-300 inline-flex items-center gap-1"
+                                className="text-brand-600 hover:text-brand-700 inline-flex items-center gap-1 font-medium"
                               >
-                                <FileCode className="w-3 h-3" /> Code
+                                <FileCode className="w-3.5 h-3.5" /> Code
                               </a>
                             )}
                             {sub.demoLink && (
@@ -194,14 +194,14 @@ const JudgeSubmissionsPage = () => {
                                 href={sub.demoLink}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1"
+                                className="text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1 font-medium"
                               >
-                                <Play className="w-3 h-3" /> Demo
+                                <Play className="w-3.5 h-3.5" /> Demo
                               </a>
                             )}
                             {hasSimilarityAlert && (
-                              <span className="text-amber-400 font-bold inline-flex items-center gap-0.5">
-                                <AlertTriangle className="w-3 h-3" />
+                              <span className="text-amber-700 font-semibold inline-flex items-center gap-0.5 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                <AlertTriangle className="w-3.5 h-3.5" />
                                 {sub.similarityFlags.length} Similarity Alert(s)
                               </span>
                             )}
@@ -209,11 +209,11 @@ const JudgeSubmissionsPage = () => {
                         </div>
                       </td>
 
-                      <td className="px-6 py-4 text-xs font-semibold text-slate-300">
+                      <td className="px-6 py-4 text-xs font-semibold text-slate-700">
                         {sub.hackathon?.title || "N/A"}
                       </td>
 
-                      <td className="px-6 py-4 text-xs font-medium text-slate-300">
+                      <td className="px-6 py-4 text-xs font-medium text-slate-700">
                         {sub.team?.name || "N/A"}
                       </td>
 
@@ -221,11 +221,11 @@ const JudgeSubmissionsPage = () => {
                         {isValidated ? (
                           <div className="space-y-0.5">
                             <StatusBadge status="human_validated" />
-                            <p className="text-3xs text-emerald-400 font-mono">
+                            <p className="text-xs text-emerald-700 font-mono font-semibold">
                               My Score: <strong>{score.totalScore}</strong> / 40
                             </p>
                             {humanScores.length > 1 && (
-                              <span className="text-4xs text-slate-400 block font-mono">
+                              <span className="text-xs text-slate-500 block font-mono">
                                 ({humanScores.length} judges graded)
                               </span>
                             )}
@@ -233,7 +233,7 @@ const JudgeSubmissionsPage = () => {
                         ) : isAiScored ? (
                           <div className="space-y-0.5">
                             <StatusBadge status="ai_scored" />
-                            <p className="text-3xs text-sky-400 font-mono">
+                            <p className="text-xs text-sky-700 font-mono font-semibold">
                               AI Baseline: <strong>{score.totalScore}</strong> / 40
                             </p>
                           </div>

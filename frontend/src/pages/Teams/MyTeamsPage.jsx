@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { getAllTeams } from "../../api/teamApi";
-import PageHeader from "../../components/common/PageHeader";
+import { getMyTeams } from "../../api/teamApi";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
 import EmptyState from "../../components/common/EmptyState";
@@ -21,14 +20,9 @@ const MyTeamsPage = () => {
     setLoading(true);
     setError("");
     try {
-      const data = await getAllTeams();
+      const data = await getMyTeams();
       if (data.success) {
-        const filtered = (data.teams || []).filter(
-          (t) =>
-            (t.leader?._id || t.leader) === user.id ||
-            t.members?.some((m) => (m._id || m) === user.id)
-        );
-        setMyTeams(filtered);
+        setMyTeams(data.teams || []);
       }
     } catch (err) {
       setError("Failed to load your teams. Please try again.");
@@ -42,17 +36,17 @@ const MyTeamsPage = () => {
   }, [user]);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
             <Users className="w-3.5 h-3.5" />
             <span>Participant Teams</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             My Teams Workspace
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Manage your project squads, view team members, and register for competitions.
           </p>
         </div>
@@ -84,55 +78,57 @@ const MyTeamsPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {myTeams.map((team) => {
-            const isLeader = (team.leader?._id || team.leader) === user?.id;
+            const currentUserId = (user?._id || user?.id)?.toString();
+            const leaderId = (team.leader?._id || team.leader)?.toString();
+            const isLeader = leaderId && currentUserId && leaderId === currentUserId;
             const maxCapacity = team.hackathon?.maxTeamSize || 4;
 
             return (
               <div
                 key={team._id}
-                className="glass-panel rounded-3xl border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between shadow-lg"
+                className="bg-white rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition flex flex-col justify-between shadow-sm"
               >
                 <div className="p-6 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-3xs font-mono font-bold text-slate-400">
+                    <span className="text-2xs font-semibold text-slate-500">
                       Roster: {team.members?.length || 1} / {maxCapacity}
                     </span>
                     <StatusBadge status={team.status} />
                   </div>
 
                   <div>
-                    <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                       {team.name}
                       {isLeader && (
-                        <span className="text-4xs font-mono font-bold bg-amber-500/15 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">
+                        <span className="text-2xs font-semibold bg-amber-50 text-amber-700 px-2.5 py-0.5 rounded-full border border-amber-200">
                           Leader
                         </span>
                       )}
                     </h3>
-                    <p className="text-xs text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
                       {team.description || "No description provided."}
                     </p>
                   </div>
 
-                  <div className="space-y-1.5 pt-3 border-t border-slate-800/60 text-3xs text-slate-400 font-mono">
+                  <div className="space-y-1.5 pt-3 border-t border-slate-100 text-xs text-slate-500">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                      <span>Challenge: <strong className="text-slate-300 font-sans">{team.hackathon?.title || "N/A"}</strong></span>
+                      <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Challenge: <strong className="text-slate-800">{team.hackathon?.title || "N/A"}</strong></span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <UserCheck className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                      <span>Leader: <strong className="text-slate-300 font-sans">{team.leader?.name || "You"}</strong></span>
+                      <UserCheck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Leader: <strong className="text-slate-800">{team.leader?.name || "You"}</strong></span>
                     </div>
                   </div>
                 </div>
 
-                <div className="px-6 py-4 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between">
-                  <span className="text-3xs text-slate-500 font-mono">
+                <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-xs text-slate-500">
                     {team.members?.length || 1} active contributors
                   </span>
                   <Link
                     to={`/teams/${team._id}`}
-                    className="text-xs font-bold text-brand-400 hover:text-brand-300 inline-flex items-center gap-1"
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1 transition"
                   >
                     View Team Details
                     <ArrowRight className="w-3.5 h-3.5" />

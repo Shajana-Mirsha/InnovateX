@@ -174,14 +174,14 @@ const AiEvaluationRunPage = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-brand-600 uppercase tracking-wider mb-1">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Research Module 3 · Automated Evaluation</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             Batch AI Assessment Runner
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Executes multi-criteria evaluation with live README extraction and strict schema verification.
           </p>
         </div>
@@ -191,7 +191,7 @@ const AiEvaluationRunPage = () => {
           <select
             value={selectedHackathonId}
             onChange={(e) => setSelectedHackathonId(e.target.value)}
-            className="px-3.5 py-2 text-sm bg-slate-900 border border-slate-700 rounded-xl text-white font-medium focus:border-brand-500 focus:outline-none"
+            className="px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl text-slate-900 font-medium focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none shadow-sm"
           >
             {hackathons.map((h) => (
               <option key={h._id} value={h._id}>
@@ -214,64 +214,64 @@ const AiEvaluationRunPage = () => {
 
       {/* Metrics Banner */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs text-slate-400 font-medium">Total Submissions</p>
-            <p className="text-2xl font-bold text-white mt-1 font-mono">{submissions.length}</p>
+            <p className="text-xs text-slate-500 font-medium">Total Submissions</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1 font-mono">{submissions.length}</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-slate-800/80 flex items-center justify-center text-slate-300">
+          <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600">
             <Database className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs text-sky-400 font-medium">AI Baseline Evaluated</p>
-            <p className="text-2xl font-bold text-sky-300 mt-1 font-mono">{aiScoredCount}</p>
+            <p className="text-xs text-sky-600 font-medium">AI Baseline Evaluated</p>
+            <p className="text-2xl font-bold text-sky-700 mt-1 font-mono">{aiScoredCount}</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+          <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600">
             <Sparkles className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs text-emerald-400 font-medium">Human Validated</p>
-            <p className="text-2xl font-bold text-emerald-300 mt-1 font-mono">{validatedCount}</p>
+            <p className="text-xs text-emerald-600 font-medium">Human Validated</p>
+            <p className="text-2xl font-bold text-emerald-700 mt-1 font-mono">{validatedCount}</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
             <CheckCircle2 className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl glass-card border border-slate-800 flex items-center justify-between">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-xs text-amber-400 font-medium">Pending Assessment</p>
-            <p className="text-2xl font-bold text-amber-300 mt-1 font-mono">{unscoredCount}</p>
+            <p className="text-xs text-amber-600 font-medium">Pending Assessment</p>
+            <p className="text-2xl font-bold text-amber-700 mt-1 font-mono">{unscoredCount}</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
             <Clock className="w-5 h-5" />
           </div>
         </div>
       </div>
 
       {/* Trigger & Controls Card */}
-      <div className="p-6 rounded-2xl glass-panel border border-slate-800 space-y-4">
+      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-base font-bold text-white">Batch Assessment Control</h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <h3 className="text-base font-bold text-slate-900">Batch Assessment Control</h3>
+            <p className="text-xs text-slate-500 mt-0.5">
               Processes queued submissions sequentially with live rate-limit throttling and socket updates.
             </p>
           </div>
 
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+            <label className="flex items-center gap-2 text-xs text-slate-700 font-medium cursor-pointer">
               <input
                 type="checkbox"
                 checked={forceReevaluate}
                 onChange={(e) => setForceReevaluate(e.target.checked)}
-                className="rounded bg-slate-800 border-slate-700 text-brand-500 focus:ring-brand-500"
+                className="rounded bg-white border-slate-300 text-brand-600 focus:ring-brand-500"
               />
               <span>Force Re-evaluate Scored</span>
             </label>
@@ -293,10 +293,10 @@ const AiEvaluationRunPage = () => {
       {/* Live Submission Progress Feed */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white tracking-tight">
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight">
             Submissions & Live Assessment Feed
           </h2>
-          <span className="text-xs text-slate-400 font-mono">
+          <span className="text-xs text-slate-500 font-mono">
             {submissions.length} total entries
           </span>
         </div>
@@ -324,39 +324,39 @@ const AiEvaluationRunPage = () => {
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
-                    className={`p-5 rounded-2xl glass-panel border transition-all ${
+                    className={`p-5 rounded-2xl bg-white border transition-all shadow-sm ${
                       liveStatus === "scoring"
-                        ? "border-brand-500/80 shadow-lg shadow-brand-500/10 bg-slate-900/90"
-                        : "border-slate-800/80 hover:border-slate-700/80 bg-slate-900/60"
+                        ? "border-brand-500 ring-2 ring-brand-500/20 shadow-md"
+                        : "border-slate-200 hover:border-slate-300 hover:shadow"
                     }`}
                   >
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       {/* Left: Info */}
                       <div className="space-y-1.5 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-mono text-slate-500">#{idx + 1}</span>
-                          <h3 className="text-base font-bold text-white tracking-tight">
+                          <span className="text-xs font-mono text-slate-400">#{idx + 1}</span>
+                          <h3 className="text-base font-bold text-slate-900 tracking-tight">
                             {sub.title}
                           </h3>
                           {liveStatus === "scoring" && (
-                            <span className="px-2.5 py-0.5 text-3xs font-semibold rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/40 animate-pulse">
+                            <span className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-brand-50 text-brand-700 border border-brand-200 animate-pulse">
                               Scoring in progress...
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                           {sub.description}
                         </p>
-                        <div className="flex items-center gap-4 text-3xs text-slate-400 pt-1">
-                          <span>Team: <strong className="text-slate-300">{sub.team?.name || "N/A"}</strong></span>
+                        <div className="flex items-center gap-4 text-xs text-slate-500 pt-1">
+                          <span>Team: <strong className="text-slate-800 font-semibold">{sub.team?.name || "N/A"}</strong></span>
                           {sub.githubLink && (
                             <a
                               href={sub.githubLink}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-sky-400 hover:text-sky-300 flex items-center gap-1"
+                              className="text-brand-600 hover:text-brand-700 flex items-center gap-1 font-medium"
                             >
-                              GitHub README <ExternalLink className="w-3 h-3" />
+                              GitHub README <ExternalLink className="w-3.5 h-3.5" />
                             </a>
                           )}
                         </div>
@@ -376,13 +376,13 @@ const AiEvaluationRunPage = () => {
                               />
                             </div>
                             <div className="mt-1.5 flex items-baseline gap-1 justify-end font-mono">
-                              <span className="text-xl font-bold text-white">
+                              <span className="text-xl font-bold text-slate-900">
                                 {effectiveScore.totalScore}
                               </span>
                               <span className="text-xs text-slate-500">/ 40 pts</span>
                             </div>
                             {effectiveScore.confidence && (
-                              <p className="text-4xs text-slate-400 mt-0.5">
+                              <p className="text-xs text-slate-500 mt-0.5">
                                 Conf: {(effectiveScore.confidence * 100).toFixed(0)}%
                               </p>
                             )}
@@ -390,13 +390,13 @@ const AiEvaluationRunPage = () => {
                         ) : (
                           <div className="text-right">
                             <StatusBadge status="unscored" />
-                            <p className="text-3xs text-slate-500 mt-1 font-mono">Pending run</p>
+                            <p className="text-xs text-slate-400 mt-1 font-mono">Pending run</p>
                           </div>
                         )}
 
                         <Link
                           to={`/submissions/${sub._id}`}
-                          className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition"
+                          className="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition"
                           title="View Submission Details"
                         >
                           <ChevronRight className="w-5 h-5" />

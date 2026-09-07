@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { createTeam } from "../../api/teamApi";
 import { getAllHackathons } from "../../api/hackathonApi";
-import PageHeader from "../../components/common/PageHeader";
 import Button from "../../components/common/Button";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import ErrorMessage from "../../components/common/ErrorMessage";
@@ -87,61 +86,61 @@ const CreateTeamPage = () => {
   }
 
   return (
-    <div className="space-y-8 max-w-2xl mx-auto pb-12">
+    <div className="space-y-6 max-w-2xl mx-auto pb-12">
       <div>
         <Link
           to="/teams"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Teams List
         </Link>
       </div>
 
-      <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-        <div className="px-8 py-6 bg-slate-900/90 border-b border-slate-800">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-brand-400" />
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-8 py-6 bg-slate-50 border-b border-slate-200">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Users className="w-5 h-5 text-blue-600" />
             Create a New Challenge Team
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Build a team for a specific hackathon. You will be registered as the Team Leader.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           {error && (
-            <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs text-rose-300">
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-3xs font-semibold text-slate-400 uppercase mb-2">
+            <label className="block text-2xs font-semibold text-slate-500 uppercase mb-2">
               Team Name *
             </label>
             <input
               type="text"
               required
               placeholder="e.g. Neural Nexus"
-              className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
+              className="block w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-blue-500 focus:bg-white transition"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
 
           <div>
-            <label className="block text-3xs font-semibold text-slate-400 uppercase mb-2">
+            <label className="block text-2xs font-semibold text-slate-500 uppercase mb-2">
               Target Hackathon Challenge *
             </label>
             {hackathons.length === 0 ? (
-              <p className="text-xs text-rose-400 font-semibold p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl">
+              <p className="text-xs text-rose-600 font-medium p-3 bg-rose-50 border border-rose-200 rounded-xl">
                 No active hackathons available to create a team for.
               </p>
             ) : (
               <select
                 required
-                className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
+                className="block w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-blue-500 focus:bg-white transition"
                 value={hackathonId}
                 onChange={(e) => setHackathonId(e.target.value)}
               >
@@ -155,19 +154,19 @@ const CreateTeamPage = () => {
           </div>
 
           <div>
-            <label className="block text-3xs font-semibold text-slate-400 uppercase mb-2">
+            <label className="block text-2xs font-semibold text-slate-500 uppercase mb-2">
               Team Description
             </label>
             <textarea
               rows={3}
               placeholder="Briefly state your team focus, stack, or open member roles..."
-              className="block w-full text-xs font-medium text-white bg-slate-900 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-brand-500"
+              className="block w-full text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-blue-500 focus:bg-white transition"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
-          <div className="flex gap-3 justify-end pt-4 border-t border-slate-800/80">
+          <div className="flex gap-3 justify-end pt-4 border-t border-slate-100">
             <Link to="/teams">
               <Button variant="outline" type="button" disabled={submitLoading}>
                 Cancel

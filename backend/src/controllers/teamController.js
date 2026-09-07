@@ -48,6 +48,41 @@ const createTeam = async (req, res) => {
 };
 
 
+// GET MY TEAMS (TEAMS WHERE CURRENT USER IS LEADER OR MEMBER)
+const getMyTeams = async (req, res) => {
+  try {
+    const { hackathonId } = req.query;
+    const query = {
+      $or: [
+        { leader: req.user._id },
+        { members: req.user._id }
+      ]
+    };
+
+    if (hackathonId) {
+      query.hackathon = hackathonId;
+    }
+
+    const teams = await Team.find(query)
+      .populate("hackathon", "title maxTeamSize startDate endDate status")
+      .populate("leader", "name email")
+      .populate("members", "name email");
+
+    res.status(200).json({
+      success: true,
+      count: teams.length,
+      teams
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch your teams",
+      error: error.message
+    });
+  }
+};
+
+
 // GET ALL TEAMS
 const getAllTeams = async (req, res) => {
   try {
@@ -238,6 +273,7 @@ const leaveTeam = async (req, res) => {
 
 module.exports = {
   createTeam,
+  getMyTeams,
   getAllTeams,
   getTeamById,
   joinTeam,

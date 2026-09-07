@@ -291,6 +291,16 @@ const batchAiEvaluate = async (req, res) => {
       });
     }
 
+    if (
+      req.user.role !== "admin" &&
+      hackathon.createdBy.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to trigger batch evaluation for this hackathon"
+      });
+    }
+
     const results = await batchEvaluateHackathon(hackathonId, { force });
 
     res.status(200).json({

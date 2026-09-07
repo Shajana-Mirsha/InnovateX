@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   LayoutDashboard,
@@ -22,33 +22,47 @@ import {
   ShieldCheck,
   Activity,
   SearchCode,
-  Settings
+  Settings,
+  UserCheck
 } from "lucide-react";
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
   if (!user) return null;
 
   const role = user.role;
+  const currentPath = location.pathname + location.search;
+
+  const isLinkActive = (to) => {
+    if (to.includes("?")) {
+      return currentPath === to;
+    }
+    return location.pathname === to && (!location.search || location.pathname !== "/admin/users");
+  };
 
   const getNavItems = () => {
     if (role === "admin") {
       return {
         main: [
           { to: "/admin/dashboard", label: "Admin Dashboard", icon: LayoutDashboard },
-          { to: "/admin/users", label: "User Directory", icon: Users },
-          { to: "/manage/hackathons", label: "Hackathons", icon: Calendar },
-          { to: "/admin/activity", label: "System Activity", icon: Activity },
+          { to: "/admin/users", label: "All Users Directory", icon: Users },
+          { to: "/admin/users?role=organizer", label: "Organizers", icon: UserCheck },
+          { to: "/admin/users?role=judge", label: "Judges", icon: Gavel },
+          { to: "/admin/users?role=participant", label: "Participants", icon: User },
+          { to: "/manage/hackathons", label: "Challenges", icon: Calendar },
+          { to: "/submissions", label: "Submissions", icon: FileCode },
+          { to: "/manage/ai-evaluation", label: "AI Monitoring", icon: Sparkles },
+          { to: "/manage/similarity", label: "Similarity Alerts", icon: ShieldAlert },
           { to: "/manage/evaluation-intelligence", label: "Evaluation Intelligence", icon: Brain },
-          { to: "/manage/ai-evaluation", label: "Evaluation Monitoring", icon: Sparkles },
-          { to: "/manage/similarity", label: "Similarity Review", icon: ShieldAlert },
-          { to: "/manage/research-metrics", label: "Research & Analytics", icon: BarChart3 },
+          { to: "/manage/research-metrics", label: "Analytics & Metrics", icon: BarChart3 },
+          { to: "/leaderboard", label: "Rankings & Leaderboard", icon: Trophy },
+          { to: "/admin/activity", label: "Audit Logs", icon: Activity },
           { to: "/admin/settings", label: "Platform Settings", icon: Settings },
-          { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
         ],
         account: [
           { to: "/notifications", label: "Notifications", icon: Bell },
-          { to: "/profile", label: "Profile", icon: User },
+          { to: "/profile", label: "Profile & Account", icon: User },
         ]
       };
     }
@@ -57,16 +71,15 @@ const Sidebar = () => {
       return {
         main: [
           { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-          { to: "/hackathons", label: "Hackathons", icon: Calendar },
-          { to: "/manage/hackathons", label: "Manage Hackathons", icon: FolderLock },
-          { to: "/manage/evaluation-intelligence", label: "Evaluation Intelligence", icon: Brain },
-          { to: "/manage/ai-evaluation", label: "AI Evaluation", icon: Sparkles },
-          { to: "/manage/similarity", label: "Similarity Review", icon: ShieldAlert },
+          { to: "/manage/hackathons", label: "Challenges", icon: Calendar },
+          { to: "/manage/registrations", label: "Participants & Regs", icon: ClipboardCheck },
           { to: "/teams", label: "Teams", icon: Users },
-          { to: "/manage/registrations", label: "Registrations", icon: ClipboardCheck },
           { to: "/submissions", label: "Submissions", icon: FileCode },
-          { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
-          { to: "/manage/results", label: "Results Management", icon: Award },
+          { to: "/manage/ai-evaluation", label: "AI Evaluation", icon: Sparkles },
+          { to: "/manage/similarity", label: "Similarity Alerts", icon: ShieldAlert },
+          { to: "/manage/evaluation-intelligence", label: "Evaluation Intelligence", icon: Brain },
+          { to: "/leaderboard", label: "Rankings", icon: Trophy },
+          { to: "/manage/results", label: "Results & Reports", icon: Award },
           { to: "/manage/research-metrics", label: "Research & Analytics", icon: BarChart3 },
         ],
         account: [
@@ -80,14 +93,13 @@ const Sidebar = () => {
       return {
         main: [
           { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-          { to: "/hackathons", label: "Hackathons", icon: Calendar },
-          { to: "/judge/submissions", label: "Submissions to Judge", icon: Gavel },
-          { to: "/judge/scores", label: "My Scores", icon: CheckSquare },
-          { to: "/manage/evaluation-intelligence", label: "Evaluation Intelligence", icon: Brain },
-          { to: "/manage/similarity", label: "Similarity Review", icon: ShieldAlert },
-          { to: "/manage/research-metrics", label: "Research & Analytics", icon: BarChart3 },
+          { to: "/judge/submissions", label: "Assigned Projects", icon: Gavel },
+          { to: "/manage/evaluation-intelligence", label: "AI Evaluation Review", icon: Brain },
+          { to: "/manage/similarity", label: "Similarity Alerts", icon: ShieldAlert },
+          { to: "/judge/scores", label: "My Evaluations", icon: CheckSquare },
           { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
-          { to: "/results", label: "Results & Winners", icon: Award },
+          { to: "/results", label: "Evaluation History", icon: Award },
+          { to: "/manage/research-metrics", label: "Research & Analytics", icon: BarChart3 },
         ],
         account: [
           { to: "/notifications", label: "Notifications", icon: Bell },
@@ -100,10 +112,10 @@ const Sidebar = () => {
     return {
       main: [
         { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-        { to: "/hackathons", label: "Hackathons", icon: Calendar },
-        { to: "/teams", label: "All Teams", icon: Users },
-        { to: "/my-teams", label: "My Teams", icon: Users },
+        { to: "/hackathons", label: "Challenges", icon: Calendar },
         { to: "/registrations", label: "My Registrations", icon: ClipboardCheck },
+        { to: "/my-teams", label: "My Teams", icon: Users },
+        { to: "/teams", label: "Browse Teams", icon: Users },
         { to: "/submissions", label: "My Submissions", icon: FileCode },
         { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
         { to: "/results", label: "Results & Winners", icon: Award },
@@ -118,7 +130,7 @@ const Sidebar = () => {
   const navItems = getNavItems();
 
   return (
-    <aside className="hidden md:flex flex-col w-64 bg-slate-900 border-r border-slate-800 text-slate-300 min-h-screen shrink-0">
+    <aside className="hidden md:flex flex-col w-64 bg-slate-900 border-r border-slate-800 text-slate-300 min-h-screen shrink-0 shadow-xl">
       {/* Brand Header */}
       <div className="flex items-center gap-3 h-16 px-6 border-b border-slate-800 bg-slate-900">
         <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-600 text-white font-extrabold text-sm shadow-md shadow-brand-600/30">
@@ -131,29 +143,30 @@ const Sidebar = () => {
       </div>
 
       {/* Nav links */}
-      <div className="flex-1 px-3.5 py-5 space-y-6 overflow-y-auto">
+      <div className="flex-1 px-3.5 py-4 space-y-5 overflow-y-auto">
         <div>
           <p className="px-3 text-4xs font-semibold tracking-wider text-slate-400 uppercase font-mono mb-2">
             Navigation
           </p>
           <ul className="space-y-1">
-            {navItems.main.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-xl transition-all duration-150 ${
-                      isActive
+            {navItems.main.map((item) => {
+              const active = isLinkActive(item.to);
+              return (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    className={`flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-xl transition-all duration-150 ${
+                      active
                         ? "bg-brand-600 text-white shadow-sm shadow-brand-600/20"
                         : "text-slate-300 hover:text-white hover:bg-slate-800/80"
-                    }`
-                  }
-                >
-                  <item.icon className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-white" />
-                  <span className="truncate">{item.label}</span>
-                </NavLink>
-              </li>
-            ))}
+                    }`}
+                  >
+                    <item.icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-400"}`} />
+                    <span className="truncate">{item.label}</span>
+                  </NavLink>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -162,23 +175,24 @@ const Sidebar = () => {
             Account & System
           </p>
           <ul className="space-y-1">
-            {navItems.account.map((item) => (
-              <li key={item.to}>
-                <NavLink
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-xl transition-all duration-150 ${
-                      isActive
+            {navItems.account.map((item) => {
+              const active = isLinkActive(item.to);
+              return (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    className={`flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-xl transition-all duration-150 ${
+                      active
                         ? "bg-brand-600 text-white shadow-sm shadow-brand-600/20"
                         : "text-slate-300 hover:text-white hover:bg-slate-800/80"
-                    }`
-                  }
-                >
-                  <item.icon className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-white" />
-                  <span className="truncate">{item.label}</span>
-                </NavLink>
-              </li>
-            ))}
+                    }`}
+                  >
+                    <item.icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-400"}`} />
+                    <span className="truncate">{item.label}</span>
+                  </NavLink>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

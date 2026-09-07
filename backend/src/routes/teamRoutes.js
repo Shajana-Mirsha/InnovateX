@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   createTeam,
+  getMyTeams,
   getAllTeams,
   getTeamById,
   joinTeam,
@@ -13,6 +14,9 @@ const protect = require("../middleware/authMiddleware");
 
 // CREATE TEAM
 router.post("/", protect, createTeam);
+
+// GET MY TEAMS
+router.get("/my-teams", protect, getMyTeams);
 
 // GET ALL TEAMS
 router.get("/", getAllTeams);

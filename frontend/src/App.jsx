@@ -76,19 +76,19 @@ const AdaptiveHackathonLayout = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-950 text-slate-100">
+    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900">
       {/* Public Navigation */}
-      <nav className="fixed w-full bg-slate-900/80 backdrop-blur-md z-40 border-b border-slate-800 py-4 px-6 md:px-12 flex items-center justify-between">
+      <nav className="fixed w-full bg-white/90 backdrop-blur-md z-40 border-b border-slate-200 py-4 px-6 md:px-12 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-600 text-white font-extrabold text-lg shadow-md shadow-brand-600/30">
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 text-white font-extrabold text-lg shadow-sm">
             IX
           </div>
-          <span className="font-bold text-white text-lg tracking-tight font-display">InnovateX</span>
+          <span className="font-bold text-slate-900 text-lg tracking-tight font-display">InnovateX</span>
         </Link>
-        <div className="flex items-center gap-6 text-xs font-semibold text-slate-300">
-          <Link to="/" className="hover:text-brand-400 transition">Home</Link>
-          <Link to="/hackathons" className="hover:text-brand-400 transition">Hackathons</Link>
-          <Link to="/login" className="hover:text-brand-400 transition">Login</Link>
+        <div className="flex items-center gap-6 text-sm font-semibold text-slate-600">
+          <Link to="/" className="hover:text-blue-600 transition">Home</Link>
+          <Link to="/hackathons" className="hover:text-blue-600 transition">Hackathons</Link>
+          <Link to="/login" className="hover:text-blue-600 transition">Login</Link>
         </div>
       </nav>
 
@@ -97,7 +97,7 @@ const AdaptiveHackathonLayout = () => {
       </main>
 
       {/* Public Footer */}
-      <footer className="bg-slate-900 text-slate-400 py-8 px-6 text-center border-t border-slate-800 text-xs">
+      <footer className="bg-white text-slate-500 py-8 px-6 text-center border-t border-slate-200 text-xs">
         <p>&copy; 2026 InnovateX Automated Evaluation Platform. IEEE Research Implementation.</p>
       </footer>
     </div>
@@ -109,7 +109,7 @@ const App = () => {
     <AuthProvider>
       <SocketProvider>
         <Router>
-          <Toaster richColors position="top-right" theme="dark" />
+          <Toaster richColors position="top-right" theme="light" />
           <Routes>
             {/* Public Pages */}
             <Route path="/" element={<LandingPage />} />

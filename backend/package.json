@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "seed": "node src/scripts/seedFullDemo.js",
     "test:ai": "node src/scripts/testAiEvaluation.js",
     "test:m1": "node src/scripts/testModule1Criteria.js",
     "test:m2": "node src/scripts/testModule2ScoreModel.js",

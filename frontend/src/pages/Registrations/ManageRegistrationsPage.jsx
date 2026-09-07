@@ -73,14 +73,14 @@ const ManageRegistrationsPage = () => {
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold text-brand-600 uppercase tracking-wider mb-1">
             <ClipboardCheck className="w-3.5 h-3.5" />
             <span>Organizer Operations</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
             Manage Team Registrations
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Review participant registrations, verify eligibility, and approve or reject submissions.
           </p>
         </div>
@@ -97,34 +97,34 @@ const ManageRegistrationsPage = () => {
           message="No teams have submitted registrations for your hackathons yet."
         />
       ) : (
-        <div className="glass-panel border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-900/90 text-4xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
-                  <th className="px-6 py-4">Hackathon</th>
-                  <th className="px-6 py-4">Team Details</th>
-                  <th className="px-6 py-4">Registered By</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                <tr className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                  <th className="px-6 py-3.5">Hackathon</th>
+                  <th className="px-6 py-3.5">Team Details</th>
+                  <th className="px-6 py-3.5">Registered By</th>
+                  <th className="px-6 py-3.5">Status</th>
+                  <th className="px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-slate-100 text-sm">
                 {registrations.map((reg) => (
-                  <tr key={reg._id} className="hover:bg-slate-800/30 transition">
+                  <tr key={reg._id} className="hover:bg-slate-50/70 transition">
                     <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-white">{reg.hackathon?.title || "Challenge"}</p>
+                      <p className="text-sm font-bold text-slate-900">{reg.hackathon?.title || "Challenge"}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-xs font-semibold text-slate-200">{reg.team?.name || "Team"}</p>
-                      <p className="text-4xs text-slate-500 font-mono mt-0.5 uppercase flex items-center gap-1">
-                        <Users className="w-3 h-3 text-slate-500" />
+                      <p className="text-sm font-semibold text-slate-800">{reg.team?.name || "Team"}</p>
+                      <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                        <Users className="w-3 h-3 text-slate-400" />
                         {reg.team?.members?.length || 1} Members
                       </p>
                     </td>
-                    <td className="px-6 py-4 text-xs font-medium text-slate-300">
+                    <td className="px-6 py-4 text-xs font-medium text-slate-700">
                       {reg.registeredBy?.name || "Applicant"}
-                      <p className="text-4xs text-slate-500 font-mono mt-0.5">{reg.registeredBy?.email}</p>
+                      <p className="text-xs text-slate-500 font-mono mt-0.5">{reg.registeredBy?.email}</p>
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={reg.status} />
@@ -134,21 +134,21 @@ const ManageRegistrationsPage = () => {
                         <div className="flex gap-2 justify-end">
                           <button
                             onClick={() => triggerStatusChange(reg, "approved")}
-                            className="p-1.5 border border-emerald-500/30 text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg transition"
+                            className="p-1.5 border border-emerald-200 text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition shadow-sm"
                             title="Approve registration"
                           >
-                            <Check className="w-3.5 h-3.5" />
+                            <Check className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => triggerStatusChange(reg, "rejected")}
-                            className="p-1.5 border border-rose-500/30 text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg transition"
+                            className="p-1.5 border border-rose-200 text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition shadow-sm"
                             title="Reject registration"
                           >
-                            <X className="w-3.5 h-3.5" />
+                            <X className="w-4 h-4" />
                           </button>
                         </div>
                       ) : (
-                        <span className="text-3xs text-slate-500 font-mono uppercase">Processed</span>
+                        <span className="text-xs text-slate-500 font-medium capitalize">{reg.status}</span>
                       )}
                     </td>
                   </tr>
@@ -168,7 +168,7 @@ const ManageRegistrationsPage = () => {
         message={`Are you sure you want to set status to "${targetStatus}" for team "${targetReg?.team?.name}"?`}
         confirmText="Confirm Status"
         cancelText="Cancel"
-        variant={targetStatus === "approved" ? "success" : "danger"}
+        variant={targetStatus === "approved" ? "primary" : "danger"}
       />
     </div>
   );

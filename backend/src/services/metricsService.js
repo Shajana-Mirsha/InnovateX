@@ -143,16 +143,21 @@ async function getAgreementMetrics(hackathonId) {
     }
   });
 
+  const metricsObj = {
+    mae,
+    rmse,
+    meanAbsoluteError: mae,
+    rootMeanSquaredError: rmse,
+    spearmanRho,
+    kendallTau,
+    cohenWeightedKappa: cohenKappa
+  };
+
   return {
     hackathonId,
     sampleSize: n,
-    totalScoreMetrics: {
-      mae,
-      rmse,
-      spearmanRho,
-      kendallTau,
-      cohenWeightedKappa: cohenKappa
-    },
+    totalScoreMetrics: metricsObj,
+    overallMetrics: metricsObj,
     criterionBreakdown: criterionAgreement,
     computedAt: new Date()
   };
@@ -181,6 +186,7 @@ async function getConsistencyMetrics(hackathonId, options = {}) {
     };
   }
 
+  // Query all AI scores for these submissions
   const existingScores = await Score.find({
     submission: { $in: submissions.map((s) => s._id) },
     source: "ai"
@@ -195,22 +201,61 @@ async function getConsistencyMetrics(hackathonId, options = {}) {
     };
   }
 
-  const variances = existingScores.map(() => ({
-    variance: 0.05,
-    stdDev: 0.22,
-    meanScore: 8.2
-  }));
+  // Group scores by submission to check for repeated evaluation runs
+  const scoresBySub = new Map();
+  existingScores.forEach((sc) => {
+    const sId = sc.submission.toString();
+    if (!scoresBySub.has(sId)) scoresBySub.set(sId, []);
+    scoresBySub.get(sId).push(sc.totalScore);
+  });
 
-  const avgVariance = 0.05;
-  const avgStdDev = 0.22;
+  const repeatedSubmissions = [];
+  scoresBySub.forEach((totals, sId) => {
+    if (totals.length >= 2) {
+      repeatedSubmissions.push({ sId, totals });
+    }
+  });
+
+  // If no submissions have repeated runs, return an honest insufficient_data state
+  if (repeatedSubmissions.length === 0) {
+    return {
+      hackathonId,
+      evaluatedSubmissionsCount: existingScores.length,
+      repeatedRunsCount: 1,
+      status: "insufficient_data",
+      message: "Insufficient repeated evaluation runs to compute test-retest consistency metrics (minimum 2 independent evaluation runs required per submission).",
+      averageTotalScoreVariance: null,
+      averageTotalScoreStdDev: null,
+      consistencyRating: null,
+      computedAt: new Date()
+    };
+  }
+
+  // Calculate real variance and standard deviation across repeated runs
+  let totalVarianceSum = 0;
+  let totalStdDevSum = 0;
+
+  repeatedSubmissions.forEach(({ totals }) => {
+    const r = totals.length;
+    const mean = totals.reduce((a, b) => a + b, 0) / r;
+    const variance = totals.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (r - 1);
+    const stdDev = Math.sqrt(variance);
+
+    totalVarianceSum += variance;
+    totalStdDevSum += stdDev;
+  });
+
+  const avgVariance = Math.round((totalVarianceSum / repeatedSubmissions.length) * 10000) / 10000;
+  const avgStdDev = Math.round((totalStdDevSum / repeatedSubmissions.length) * 10000) / 10000;
 
   return {
     hackathonId,
-    evaluatedSubmissionsCount: existingScores.length,
-    repeatedRunsCount: runs,
+    status: "ready",
+    evaluatedSubmissionsCount: repeatedSubmissions.length,
+    repeatedRunsCount: Math.max(...repeatedSubmissions.map((r) => r.totals.length)),
     averageTotalScoreVariance: avgVariance,
     averageTotalScoreStdDev: avgStdDev,
-    consistencyRating: avgStdDev < 0.5 ? "HIGH_CONSISTENCY" : "MODERATE_CONSISTENCY",
+    consistencyRating: avgStdDev < 0.5 ? "HIGH_CONSISTENCY" : avgStdDev < 1.0 ? "MODERATE_CONSISTENCY" : "LOW_CONSISTENCY",
     computedAt: new Date()
   };
 }
@@ -228,6 +273,7 @@ async function getSimilarityPerformanceMetrics(hackathonId, threshold = 0.8) {
     return {
       hackathonId,
       threshold,
+      totalGroundTruthLabels: 0,
       groundTruthSampleSize: 0,
       status: "insufficient_data",
       message: "No human-annotated similarity ground truth labels recorded for this hackathon yet."
@@ -254,9 +300,17 @@ async function getSimilarityPerformanceMetrics(hackathonId, threshold = 0.8) {
   const f1 = precision + recall > 0 ? Math.round(((2 * precision * recall) / (precision + recall)) * 10000) / 10000 : 0;
   const accuracy = groundTruthLabels.length > 0 ? Math.round(((tp + tn) / groundTruthLabels.length) * 10000) / 10000 : 0;
 
+  const perfMetrics = {
+    precision,
+    recall,
+    f1Score: f1,
+    accuracy
+  };
+
   return {
     hackathonId,
     threshold,
+    totalGroundTruthLabels: groundTruthLabels.length,
     groundTruthSampleSize: groundTruthLabels.length,
     confusionMatrix: {
       truePositives: tp,
@@ -264,12 +318,8 @@ async function getSimilarityPerformanceMetrics(hackathonId, threshold = 0.8) {
       falseNegatives: fn,
       trueNegatives: tn
     },
-    performanceMetrics: {
-      precision,
-      recall,
-      f1Score: f1,
-      accuracy
-    },
+    metrics: perfMetrics,
+    performanceMetrics: perfMetrics,
     computedAt: new Date()
   };
 }
@@ -300,6 +350,17 @@ async function getTimeSavedMetrics(hackathonId) {
     actualAiAssistedHours: Math.round(((humanValidationCount * AI_ASSISTED_REVIEW_MINUTES) / 60) * 10) / 10,
     totalHoursSaved: Math.round((totalMinutesSaved / 60) * 10) / 10,
     turnaroundTimeReductionPercent: percentTurnaroundReduction,
+    timeSavedPercentage: percentTurnaroundReduction,
+    aiAssisted: {
+      meanTurnaroundMinutes: AI_ASSISTED_REVIEW_MINUTES,
+      meanTurnaroundHours: Math.round((AI_ASSISTED_REVIEW_MINUTES / 60) * 100) / 100,
+      sampleCount: humanValidationCount
+    },
+    legacyManualBaseline: {
+      meanTurnaroundMinutes: MANUAL_BASELINE_MINUTES_PER_SUBMISSION,
+      meanTurnaroundHours: Math.round((MANUAL_BASELINE_MINUTES_PER_SUBMISSION / 60) * 100) / 100,
+      sampleCount: humanValidationCount
+    },
     computedAt: new Date()
   };
 }

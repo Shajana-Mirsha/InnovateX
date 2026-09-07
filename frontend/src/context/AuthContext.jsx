@@ -3,6 +3,17 @@ import { login as loginApi, getMe as getMeApi } from "../api/authApi";
 
 const AuthContext = createContext(null);
 
+const normalizeUser = (userData) => {
+  if (!userData) return null;
+  const rawId = userData.id || userData._id;
+  const strId = rawId ? String(rawId) : undefined;
+  return {
+    ...userData,
+    id: strId,
+    _id: strId
+  };
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || null);
@@ -16,21 +27,20 @@ export const AuthProvider = ({ children }) => {
         try {
           const data = await getMeApi();
           if (data.success && data.user) {
-            setUser(data.user);
-            localStorage.setItem("user", JSON.stringify(data.user));
+            const normalized = normalizeUser(data.user);
+            setUser(normalized);
+            localStorage.setItem("user", JSON.stringify(normalized));
           } else {
             // Token invalid or user not found
             logout();
           }
         } catch (error) {
           console.error("Failed to authenticate with token:", error);
-          // If network is down, we might want to keep the cached user rather than logging out immediately,
-          // but if it is a 401/403, axios interceptor will handle logging out.
-          // For now, let's try loading the cached user from local storage as fallback
+          // Fallback to cached user in local storage
           const cachedUser = localStorage.getItem("user");
           if (cachedUser) {
             try {
-              setUser(JSON.parse(cachedUser));
+              setUser(normalizeUser(JSON.parse(cachedUser)));
             } catch (e) {
               logout();
             }
@@ -52,10 +62,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await loginApi(email, password);
       if (data.success && data.token) {
+        const normalized = normalizeUser(data.user);
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(normalized));
         setToken(data.token);
-        setUser(data.user);
+        setUser(normalized);
         return { success: true };
       } else {
         return { success: false, message: data.message || "Login failed" };

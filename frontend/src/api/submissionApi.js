@@ -1,7 +1,8 @@
 import api from "./axios";
 
-export const getSubmissions = async () => {
-  const response = await api.get("/submissions");
+export const getSubmissions = async (hackathonId) => {
+  const url = hackathonId ? `/submissions?hackathonId=${hackathonId}` : "/submissions";
+  const response = await api.get(url);
   return response.data;
 };
 
